@@ -1,0 +1,3720 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinancialControl - Sistema de Controle Financeiro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border: #e9ecef;
+            --demo: #ffc107;
+            --premium: #28a745;
+            --pix: #32BCAD;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            font-size: 14px;
+        }
+        
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .login-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        
+        .logo-subtitle {
+            color: var(--gray);
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .checkbox-group label {
+            font-size: 0.85rem;
+            color: var(--gray);
+            cursor: pointer;
+        }
+        
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .btn-info {
+            background: var(--info);
+            color: white;
+        }
+        
+        .btn-pix {
+            background: var(--pix);
+            color: white;
+        }
+        
+        .btn-pix:hover {
+            background: #2aa89a;
+        }
+        
+        .btn-outline-primary {
+            background: transparent;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-lg {
+            padding: 12px 20px;
+            font-size: 0.95rem;
+        }
+        
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+        
+        .btn-xs {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+        }
+        
+        .alert {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .app {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 10px;
+            min-height: calc(100vh - 20px);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .plano-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 10px;
+        }
+        
+        .badge {
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .badge-demo {
+            background: var(--demo);
+            color: #000;
+        }
+        
+        .badge-premium {
+            background: var(--premium);
+            color: white;
+        }
+        
+        .badge-pix {
+            background: var(--pix);
+            color: white;
+        }
+        
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: var(--light);
+            border-bottom: 1px solid var(--border);
+            padding: 0 15px;
+            overflow-x: auto;
+        }
+        
+        .nav-tab {
+            padding: 12px 15px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            font-size: 0.8rem;
+        }
+        
+        .nav-tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 15px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        
+        th {
+            background: var(--light);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        .receita {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .despesa {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+            border-left: 3px solid var(--primary);
+        }
+        
+        .summary-card.receita {
+            border-left-color: #28a745;
+        }
+        
+        .summary-card.despesa {
+            border-left-color: #dc3545;
+        }
+        
+        .summary-card.saldo-acumulado {
+            border-left-color: #4361ee;
+            background: linear-gradient(135deg, #f8f9ff 0%, #eef0ff 100%);
+        }
+        
+        .summary-card h3 {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-bottom: 8px;
+        }
+        
+        .summary-card .value {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        
+        .summary-card .subtitle {
+            font-size: 0.7rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        .saldo-positivo {
+            color: #28a745;
+        }
+        
+        .saldo-negativo {
+            color: #dc3545;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .quick-action-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 20px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .quick-action-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .quick-action-card i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        
+        .quick-action-card h3 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .quick-action-card p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .floating-action-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+        }
+        
+        .chart-card h3 {
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 250px;
+        }
+        
+        .transactions-scroll-container {
+            max-height: 350px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+        
+        .transactions-table {
+            width: 100%;
+        }
+        
+        .transactions-table th:nth-child(1),
+        .transactions-table td:nth-child(1) {
+            min-width: 80px;
+        }
+        
+        .transactions-table th:nth-child(2),
+        .transactions-table td:nth-child(2) {
+            min-width: 120px;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .transactions-table th:nth-child(3),
+        .transactions-table td:nth-child(3) {
+            min-width: 90px;
+        }
+        
+        .transactions-table th:nth-child(4),
+        .transactions-table td:nth-child(4) {
+            min-width: 80px;
+        }
+        
+        .transactions-table th:nth-child(5),
+        .transactions-table td:nth-child(5) {
+            min-width: 70px;
+        }
+        
+        .transactions-table th:nth-child(6),
+        .transactions-table td:nth-child(6) {
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .parcelamento-options {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .parcelamento-options.active {
+            display: block;
+        }
+        
+        .plano-card {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .plano-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .plano-card.premium {
+            border-color: var(--premium);
+            background: linear-gradient(135deg, #f8f9ff 0%, #eef0ff 100%);
+        }
+        
+        .whatsapp-button {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .whatsapp-button:hover {
+            background: #1da851;
+            transform: translateY(-2px);
+        }
+        
+        .cancelamento-info {
+            background: #fff8f8;
+            border: 2px solid #f8d7da;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .cancelamento-info h4 {
+            color: #dc3545;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        
+        .cancelamento-info ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .cancelamento-info li {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .search-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .search-filter input {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                font-size: 13px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+                padding: 0;
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: var(--light);
+                z-index: 1000;
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+
+            .nav-tabs.mobile-open {
+                display: flex;
+            }
+
+            .nav-tab {
+                border-bottom: 1px solid var(--border);
+                border-left: 2px solid transparent;
+                padding: 12px 15px;
+                justify-content: flex-start;
+            }
+
+            .nav-tab.active {
+                border-left-color: var(--primary);
+                border-bottom-color: var(--border);
+            }
+
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .header-left h1 {
+                font-size: 1rem;
+            }
+
+            .user-info {
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            .app {
+                margin: 8px;
+                min-height: calc(100vh - 16px);
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .action-buttons {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .transactions-table th,
+            .transactions-table td {
+                padding: 6px 4px;
+                font-size: 0.7rem;
+            }
+            
+            .transactions-table th:nth-child(1),
+            .transactions-table td:nth-child(1) {
+                min-width: 60px;
+            }
+            
+            .transactions-table th:nth-child(2),
+            .transactions-table td:nth-child(2) {
+                min-width: 80px;
+                max-width: 100px;
+            }
+            
+            .transactions-table th:nth-child(3),
+            .transactions-table td:nth-child(3) {
+                min-width: 70px;
+            }
+            
+            .transactions-table th:nth-child(4),
+            .transactions-table td:nth-child(4) {
+                min-width: 60px;
+            }
+            
+            .transactions-table th:nth-child(5),
+            .transactions-table td:nth-child(5) {
+                min-width: 50px;
+            }
+            
+            .transactions-table th:nth-child(6),
+            .transactions-table td:nth-child(6) {
+                min-width: 40px;
+            }
+            
+            .floating-action-btn {
+                bottom: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+            
+            .tab-content {
+                padding: 12px;
+            }
+            
+            .card {
+                padding: 12px;
+            }
+            
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-control {
+                padding: 8px 10px;
+                font-size: 0.85rem;
+            }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+            
+            .table-container {
+                width: 100%;
+                overflow-x: auto;
+            }
+            
+            .search-filter {
+                flex-direction: column;
+            }
+            
+            .search-filter input {
+                min-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 20px 15px;
+                margin: 5px;
+            }
+            
+            .logo {
+                font-size: 1.4rem;
+            }
+
+            .export-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .chart-wrapper {
+                height: 200px;
+            }
+            
+            .transactions-table th,
+            .transactions-table td {
+                padding: 4px 2px;
+                font-size: 0.65rem;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .grid-4 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .charts-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i> FinancialControl
+            </div>
+            <div class="logo-subtitle">Controle suas finanças de forma inteligente</div>
+            
+            <!-- Formulário de Login -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">E-mail</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="Seu e-mail" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Senha</label>
+                    <input type="password" id="loginSenha" class="form-control" placeholder="Sua senha" required>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="lembrarLogin">
+                    <label for="lembrarLogin">Lembrar meus dados</label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Entrar no Sistema
+                </button>
+            </form>
+            
+            <button onclick="mostrarCadastro()" class="btn btn-outline-primary btn-block" style="margin-top: 15px;">
+                <i class="fas fa-user-plus"></i> Criar Nova Conta Gratuita
+            </button>
+            
+            <!-- Formulário de Cadastro -->
+            <div id="cadastroSection" style="display: none; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                <h3 style="text-align: center; margin-bottom: 15px; font-size: 1rem;">Primeiro Acesso? Cadastre-se Gratuitamente</h3>
+                
+                <form id="cadastroForm">
+                    <div class="form-group">
+                        <label class="form-label">Nome Completo</label>
+                        <input type="text" id="cadastroNome" class="form-control" placeholder="Seu nome completo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">E-mail</label>
+                        <input type="email" id="cadastroEmail" class="form-control" placeholder="Seu melhor e-mail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Senha</label>
+                        <input type="password" id="cadastroSenha" class="form-control" placeholder="Crie uma senha" required minlength="4">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Confirmar Senha</label>
+                        <input type="password" id="cadastroConfirmarSenha" class="form-control" placeholder="Confirme sua senha" required>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 0.8rem;">
+                        <p><strong><i class="fas fa-gift"></i> Plano Gratuito:</strong> 10 transações para testar</p>
+                        <p><strong><i class="fas fa-crown"></i> Após teste:</strong> Assine o plano premium por R$ 9,90/mês</p>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success btn-block">
+                        <i class="fas fa-user-plus"></i> Criar Conta Gratuita
+                    </button>
+                    
+                    <p style="text-align: center; margin-top: 10px;">
+                        <a href="#" onclick="mostrarLogin()" style="font-size: 0.8rem;">Já tenho conta? Fazer login</a>
+                    </p>
+                </form>
+            </div>
+            
+            <div id="loginMessage" class="alert" style="display: none; margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <!-- Aplicação Principal -->
+    <div id="app" class="app">
+        <div class="header">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-left">
+                    <h1><i class="fas fa-chart-line"></i> FinancialControl</h1>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="plano-indicator">
+                    <span id="planoBadge" class="badge badge-demo">
+                        <i class="fas fa-gift"></i> DEMO
+                    </span>
+                    <small id="contadorTransacoes" style="font-size: 0.7rem; color: rgba(255,255,255,0.8); display: none;">
+                        0/10 transações
+                    </small>
+                </div>
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div>
+                    <div id="userName" style="font-size: 0.8rem;">Usuário</div>
+                    <div id="userRole" style="font-size: 0.65rem; opacity: 0.8;">Usuário</div>
+                </div>
+                <button onclick="logout()" class="btn btn-danger btn-sm" style="margin-left: 10px;">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
+            </div>
+        </div>
+        
+        <div class="nav-tabs" id="navTabs">
+            <button class="nav-tab active" onclick="openTab('dashboard')">
+                <i class="fas fa-home"></i> Dashboard
+            </button>
+            <button class="nav-tab" onclick="openTab('transacoes')">
+                <i class="fas fa-exchange-alt"></i> Transações
+            </button>
+            <button class="nav-tab" onclick="openTab('relatorios')">
+                <i class="fas fa-chart-bar"></i> Relatórios
+            </button>
+            <button class="nav-tab" onclick="openTab('planos')">
+                <i class="fas fa-crown"></i> Planos
+            </button>
+            <button class="nav-tab" id="perfilTab" onclick="openTab('perfil')">
+                <i class="fas fa-user"></i> Meu Perfil
+            </button>
+            <button class="nav-tab" id="cancelamentoTab" style="display: none;" onclick="openTab('cancelamento')">
+                <i class="fas fa-times-circle"></i> Cancelamento
+            </button>
+            <button class="nav-tab" id="adminTab" style="display: none;" onclick="openTab('admin')">
+                <i class="fas fa-cog"></i> Administração
+            </button>
+        </div>
+        
+        <!-- Dashboard -->
+        <div id="dashboard" class="tab-content active">
+            <!-- Card de Ação Rápida -->
+            <div class="grid-3">
+                <div class="quick-action-card" onclick="openTab('transacoes')">
+                    <i class="fas fa-plus-circle"></i>
+                    <h3>Nova Transação</h3>
+                    <p>Adicione uma nova receita ou despesa</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-calendar"></i> Resumo Financeiro</h3>
+                    <input type="month" id="filtroMesDashboard" class="form-control" style="min-width: 130px;" onchange="carregarDashboard()">
+                </div>
+            </div>
+
+            <div class="grid-4">
+                <div class="summary-card receita">
+                    <h3><i class="fas fa-arrow-up"></i> Receitas</h3>
+                    <div id="receitasMes" class="value receita">R$ 0,00</div>
+                    <div class="subtitle">Este mês</div>
+                </div>
+                <div class="summary-card despesa">
+                    <h3><i class="fas fa-arrow-down"></i> Despesas</h3>
+                    <div id="despesasMes" class="value despesa">R$ 0,00</div>
+                    <div class="subtitle">Este mês</div>
+                </div>
+                <div class="summary-card">
+                    <h3><i class="fas fa-balance-scale"></i> Saldo Mensal</h3>
+                    <div id="saldoMes" class="value">R$ 0,00</div>
+                    <div class="subtitle">Este mês</div>
+                </div>
+                <div class="summary-card saldo-acumulado">
+                    <h3><i class="fas fa-piggy-bank"></i> Saldo Acumulado</h3>
+                    <div id="saldoAcumulado" class="value">R$ 0,00</div>
+                    <div class="subtitle">Até o momento</div>
+                </div>
+            </div>
+            
+            <!-- Gráficos no Dashboard -->
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-pie"></i> Distribuição por Categoria</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="graficoPizza"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-line"></i> Evolução Mensal</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="graficoLinha"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Transações -->
+        <div id="transacoes" class="tab-content">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-plus-circle"></i> Nova Transação</h3>
+                    </div>
+                    <form id="transacaoForm">
+                        <div class="form-group">
+                            <label class="form-label">Descrição</label>
+                            <input type="text" id="descricao" class="form-control" placeholder="Ex: Salário, Aluguel..." required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Valor (R$)</label>
+                            <input type="number" step="0.01" id="valor" class="form-control" placeholder="0,00" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tipo</label>
+                            <select id="tipo" class="form-control" required>
+                                <option value="receita">Receita</option>
+                                <option value="despesa">Despesa</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Categoria</label>
+                            <select id="categoria" class="form-control" required>
+                                <option value="Salário">Salário</option>
+                                <option value="Alimentação">Alimentação</option>
+                                <option value="Transporte">Transporte</option>
+                                <option value="Moradia">Moradia</option>
+                                <option value="Lazer">Lazer</option>
+                                <option value="Saúde">Saúde</option>
+                                <option value="Educação">Educação</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Data</label>
+                            <input type="date" id="dataTransacao" class="form-control" required>
+                        </div>
+                        
+                        <!-- Opções de Parcelamento/Recorrência -->
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Transação</label>
+                            <select id="tipoTransacao" class="form-control" onchange="toggleParcelamentoOptions()">
+                                <option value="unica">Única</option>
+                                <option value="parcelada">Parcelada</option>
+                                <option value="recorrente">Recorrente</option>
+                            </select>
+                        </div>
+                        
+                        <div id="parcelamentoOptions" class="parcelamento-options">
+                            <div class="form-group">
+                                <label class="form-label" id="parcelamentoLabel">Número de Parcelas</label>
+                                <input type="number" id="numeroParcelas" class="form-control" min="2" value="2">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Frequência</label>
+                                <select id="frequencia" class="form-control">
+                                    <option value="mensal">Mensal</option>
+                                    <option value="bimestral">Bimestral</option>
+                                    <option value="trimestral">Trimestral</option>
+                                    <option value="semestral">Semestral</option>
+                                    <option value="anual">Anual</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-save"></i> Salvar Transação
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-list"></i> Minhas Transações</h3>
+                        <input type="month" id="filtroMes" class="form-control" style="min-width: 130px;" onchange="carregarTransacoes()">
+                    </div>
+                    <div class="transactions-scroll-container">
+                        <div class="table-container">
+                            <table class="transactions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Descrição</th>
+                                        <th>Categoria</th>
+                                        <th>Valor</th>
+                                        <th>Tipo</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transacoesBody">
+                                    <tr>
+                                        <td colspan="6" style="text-align: center; color: var(--gray);">
+                                            Nenhuma transação encontrada
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relatórios -->
+        <div id="relatorios" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-chart-bar"></i> Relatórios Mensais</h3>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Selecione o Mês</label>
+                        <input type="month" id="mesRelatorio" class="form-control">
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button onclick="gerarRelatorio()" class="btn btn-primary">
+                            <i class="fas fa-chart-bar"></i> Gerar Relatório
+                        </button>
+                    </div>
+                </div>
+
+                <div id="relatorioResultado" style="display: none;">
+                    <!-- Resultado do relatório será inserido aqui -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Planos -->
+        <div id="planos" class="tab-content">
+            <!-- Status da Assinatura -->
+            <div id="assinaturaStatusContainer"></div>
+            
+            <!-- Botão de Cancelamento (apenas para premium) -->
+            <div id="cancelamentoPremiumBtnContainer" style="display: none; margin-bottom: 20px; text-align: center;">
+                <button onclick="abrirAbaCancelamento()" class="btn btn-danger btn-lg" style="padding: 12px 30px; font-size: 1rem;">
+                    <i class="fas fa-times-circle"></i> Solicitar Cancelamento do Plano Premium
+                </button>
+                <p style="font-size: 0.8rem; color: var(--gray); margin-top: 10px;">
+                    Clique aqui para solicitar o cancelamento do seu plano premium
+                </p>
+            </div>
+            
+            <!-- Planos Disponíveis -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-crown"></i> Escolha seu Plano</h3>
+                    <div class="badge badge-success">
+                        <i class="fas fa-check"></i> 100% Funcional
+                    </div>
+                </div>
+                
+                <div class="grid-2">
+                    <!-- Plano Demo Gratuito -->
+                    <div class="plano-card">
+                        <div style="text-align: center;">
+                            <h3 style="color: var(--demo); margin-bottom: 10px;">
+                                <i class="fas fa-gift"></i> Plano Demo Gratuito
+                            </h3>
+                            <div class="plano-price" style="color: var(--demo);">
+                                GRÁTIS
+                            </div>
+                            <ul style="text-align: left; margin: 20px 0; padding-left: 20px;">
+                                <li>✅ Até 10 transações</li>
+                                <li>✅ Dashboard completo</li>
+                                <li>✅ Relatórios em excel e pdf</li>
+                                <li>✅ Gráficos interativos</li>
+                                <li>⛔ Sem suporte</li>
+                            </ul>
+                            <div style="margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                                <p style="font-size: 0.9rem; margin-bottom: 10px;">
+                                    <strong>Status atual:</strong> <span id="statusDemo">Ativo</span>
+                                </p>
+                                <button onclick="scrollToComoFunciona()" class="btn btn-outline-primary btn-block">
+                                    <i class="fas fa-info-circle"></i> Saber mais
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Plano Premium -->
+                    <div class="plano-card premium">
+                        <div style="text-align: center;">
+                            <h3 style="color: var(--premium); margin-bottom: 10px;">
+                                <i class="fas fa-crown"></i> Plano Premium
+                            </h3>
+                            <div class="plano-price" style="color: var(--premium);">
+                                R$ 9,90
+                                <div class="period">por mês</div>
+                            </div>
+                            <ul style="text-align: left; margin: 20px 0; padding-left: 20px;">
+                                <li>✅ Transações ilimitadas</li>
+                                <li>✅ Dashboard completo</li>
+                                <li>✅ Relatórios em excel e pdf</li>
+                                <li>✅ Suporte por WhatsApp</li>
+                                <li>✅ Gráficos interativos</li>
+                            </ul>
+                            <button onclick="solicitarPlanoPremium()" class="btn btn-success btn-block btn-lg">
+                                <i class="fas fa-shopping-cart"></i> Solicitar Plano Premium
+                            </button>
+                            <p style="font-size: 0.8rem; color: var(--gray); margin-top: 10px;">
+                                Clique para acessar o pagamento recorrente
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="comoFuncionaSection" style="margin-top: 20px; padding: 15px; background: #f0f8ff; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <h4 style="color: var(--primary); margin-bottom: 10px;">
+                        <i class="fas fa-question-circle"></i> Como funciona?
+                    </h4>
+                    <ol style="margin-left: 20px; font-size: 0.9rem;">
+                        <li>Clique em "Solicitar Plano Premium"</li>
+                        <li>Será aberto o local de pagamento do Mercado Pago</li>
+                        <li>Após realizar o pagamento do plano recorrente</li>
+                        <li>Será direcionado ao WhatsApp do suporte</li>
+                        <li>Envie seu nome completo e o email de cadastro no Financial Control</li>
+                        <li>O suporte realizará a verificação manual do pagamento e na sequência fará a liberação do sistema premium</li>
+                        <li>Após confirmação do pagamento, seu plano será ativado manualmente</li>
+                        <li style="color: #dc3545; font-weight: bold;">Cancele o plano premium a qualquer momento, no botão que será liberado nesta mesma tela, após liberação do seu plano premium</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Perfil do Usuário -->
+        <div id="perfil" class="tab-content">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-user"></i> Meus Dados</h3>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nome Completo</label>
+                        <input type="text" id="perfilNome" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">E-mail</label>
+                        <input type="email" id="perfilEmail" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Plano Atual</label>
+                        <input type="text" id="perfilPlano" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nível de Acesso</label>
+                        <input type="text" id="perfilNivel" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Transações Realizadas</label>
+                        <input type="text" id="perfilTransacoes" class="form-control" readonly>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-key"></i> Alterar Senha</h3>
+                    </div>
+                    <form id="alterarSenhaForm">
+                        <div class="form-group">
+                            <label class="form-label">Senha Atual</label>
+                            <input type="password" id="senhaAtual" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nova Senha</label>
+                            <input type="password" id="novaSenhaPerfil" class="form-control" required minlength="4">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirmar Nova Senha</label>
+                            <input type="password" id="confirmarNovaSenha" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Alterar Senha
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cancelamento -->
+        <div id="cancelamento" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-times-circle"></i> Cancelamento de Plano</h3>
+                </div>
+                
+                <div class="cancelamento-info">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Informações Importantes</h4>
+                    <p style="margin-bottom: 15px; font-size: 0.9rem;">
+                        Ao solicitar o cancelamento do seu plano, esteja ciente das seguintes informações:
+                    </p>
+                    <ul>
+                        <li>Você pode solicitar o cancelamento do plano recorrente a qualquer momento</li>
+                        <li>O cancelamento será efetivado no final do período atual já pago</li>
+                        <li>Você continuará tendo acesso ao sistema até o final do período contratado</li>
+                        <li>Após o cancelamento, todos os seus dados serão mantidos por 30 dias</li>
+                        <li>Se desejar reativar sua conta posteriormente, entre em contato conosco</li>
+                        <li>Não haverá reembolso de valores já pagos referentes ao período atual</li>
+                    </ul>
+                </div>
+                
+                <div class="cancelamento-info" style="background: #fffdf0; border-color: #ffeaa7;">
+                    <h4><i class="fas fa-lightbulb"></i> Antes de Cancelar</h4>
+                    <p style="margin-bottom: 15px; font-size: 0.9rem;">
+                        Considere estas alternativas antes de prosseguir com o cancelamento:
+                    </p>
+                    <ul>
+                        <li>Verifique se há problemas técnicos que possam ser resolvidos</li>
+                        <li>Entre em contato com nosso suporte para esclarecer dúvidas</li>
+                        <li>Avalie a possibilidade de alterar para um plano mais básico</li>
+                        <li>Confirme se realmente não utilizará mais o sistema</li>
+                    </ul>
+                </div>
+                
+                <div style="text-align: center; padding: 20px;">
+                    <p style="margin-bottom: 20px; font-size: 0.9rem;">
+                        Para solicitar cancelamento do plano premium, entre em contato via WhatsApp:
+                    </p>
+                    
+                    <button onclick="abrirWhatsAppCancelamento()" class="btn btn-danger" style="padding: 15px 25px; font-size: 1rem;">
+                        <i class="fab fa-whatsapp"></i> SOLICITAR CANCELAMENTO
+                    </button>
+                    
+                    <p style="font-size: 0.8rem; color: var(--gray); margin-top: 15px;">
+                        Esta ação abrirá o WhatsApp com uma mensagem pré-preparada para nosso atendimento
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Administração (APENAS PARA ADMIN) -->
+        <div id="admin" class="tab-content">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-user-plus"></i> Criar Novo Usuário</h3>
+                    </div>
+                    <form id="usuarioForm">
+                        <div class="form-group">
+                            <label class="form-label">Nome Completo</label>
+                            <input type="text" id="novoNome" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">E-mail</label>
+                            <input type="email" id="novoEmail" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Senha</label>
+                            <input type="password" id="novaSenha" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nível de Acesso</label>
+                            <select id="novoNivelAcesso" class="form-control" required>
+                                <option value="usuario">Usuário</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Plano</label>
+                            <select id="novoPlano" class="form-control" required>
+                                <option value="demo">Demo (10 transações)</option>
+                                <option value="premium">Premium (Ilimitado)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Criar Usuário
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-users"></i> Gerenciar Usuários</h3>
+                    </div>
+                    
+                    <!-- Filtro de busca -->
+                    <div class="search-filter">
+                        <input type="text" id="buscarUsuario" class="form-control" placeholder="Buscar por nome ou e-mail..." onkeyup="filtrarUsuarios()">
+                        <button onclick="limparBusca()" class="btn btn-outline-primary">
+                            <i class="fas fa-times"></i> Limpar
+                        </button>
+                    </div>
+                    
+                    <!-- Abas para usuários demo e premium -->
+                    <div style="margin-bottom: 15px;">
+                        <button onclick="mostrarUsuariosDemo()" class="btn btn-sm btn-warning">
+                            <i class="fas fa-gift"></i> Usuários Demo
+                        </button>
+                        <button onclick="mostrarUsuariosPremium()" class="btn btn-sm btn-primary">
+                            <i class="fas fa-crown"></i> Usuários Premium
+                        </button>
+                    </div>
+                    
+                    <!-- Tabela de usuários demo -->
+                    <div id="usuariosDemoSection" style="display: block;">
+                        <h4 style="margin-bottom: 10px; font-size: 0.9rem;"><i class="fas fa-gift"></i> Usuários Demo</h4>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>E-mail</th>
+                                        <th>Transações</th>
+                                        <th>Cadastro</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usuariosDemoBody">
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; color: var(--gray);">
+                                            Carregando usuários demo...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Tabela de usuários premium -->
+                    <div id="usuariosPremiumSection" style="display: none;">
+                        <h4 style="margin-bottom: 10px; font-size: 0.9rem;"><i class="fas fa-crown"></i> Usuários Premium</h4>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>E-mail</th>
+                                        <th>Status</th>
+                                        <th>Cadastro</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usuariosPremiumBody">
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; color: var(--gray);">
+                                            Carregando usuários premium...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Botão flutuante -->
+    <button class="floating-action-btn" id="floatingBtn" style="display: none;" onclick="openTab('transacoes')">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <script>
+        // ============================================================
+        // CONFIGURAÇÕES DO SISTEMA
+        // ============================================================
+        
+        // 1. CONFIGURAÇÃO DO SUPABASE
+        const SUPABASE_URL = 'https://rprocjpzydkondrguzui.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJwcm9janB6eWRrb25kcmd1enVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2ODA2NjIsImV4cCI6MjA3OTI1NjY2Mn0.bD36ix62EYFdnnTKXN3iK9C9AoOeKyWGkY10D-A1tm0';
+        
+        // 2. CONFIGURAÇÕES DO SISTEMA
+        const LIMITE_TRANSACOES_DEMO = 10;
+        const WHATSAPP_NUMERO = '5544997311635';
+        
+        // ============================================================
+        // FIM DAS CONFIGURAÇÕES
+        // ============================================================
+        
+        // Variáveis globais
+        let usuarioLogado = null;
+        let graficoPizza = null;
+        let graficoLinha = null;
+        let usuariosDemoCache = [];
+        let usuariosPremiumCache = [];
+        let relatorioAtual = {
+            transacoes: [],
+            mesRelatorio: '',
+            receitas: 0,
+            despesas: 0,
+            categorias: []
+        };
+
+        // ==================== FUNÇÕES DE UTILIDADE PARA FUSO HORÁRIO ====================
+
+        // Obter data atual no fuso horário de Brasília (BRT/BRST)
+        function getDataBrasilia() {
+            const agora = new Date();
+            
+            // Diferença em horas entre UTC e Brasília (UTC-3)
+            const offsetBrasilia = -3;
+            
+            // Converter para hora de Brasília
+            const horaBrasilia = new Date(agora.getTime() + (offsetBrasilia * 60 * 60 * 1000));
+            
+            return horaBrasilia;
+        }
+
+        // Formatar data para YYYY-MM-DD (para input date)
+        function formatarDataParaInput(date) {
+            const ano = date.getFullYear();
+            const mes = String(date.getMonth() + 1).padStart(2, '0');
+            const dia = String(date.getDate()).padStart(2, '0');
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        // Formatar data para exibição (pt-BR)
+        function formatarDataParaExibicao(date) {
+            if (!date) return '';
+            
+            let dataObj;
+            
+            if (typeof date === 'string') {
+                // Se a data for uma string no formato YYYY-MM-DD
+                if (date.includes('T')) {
+                    dataObj = new Date(date);
+                } else {
+                    // Adicionar horário do meio-dia de Brasília para evitar problemas
+                    const [ano, mes, dia] = date.split('-');
+                    dataObj = new Date(ano, mes - 1, dia, 12, 0, 0);
+                }
+            } else if (date instanceof Date) {
+                dataObj = date;
+            } else {
+                return 'Data inválida';
+            }
+            
+            return dataObj.toLocaleDateString('pt-BR');
+        }
+
+        // Obter ano e mês no formato YYYY-MM (para filtros)
+        function getMesAtualBrasilia() {
+            const dataBrasilia = getDataBrasilia();
+            const ano = dataBrasilia.getFullYear();
+            const mes = String(dataBrasilia.getMonth() + 1).padStart(2, '0');
+            return `${ano}-${mes}`;
+        }
+
+        // Converter string de data para objeto Date considerando Brasília
+        function parseDataBrasilia(dataString) {
+            if (!dataString) return null;
+            
+            // Se já for um objeto Date
+            if (dataString instanceof Date) return dataString;
+            
+            // Se for uma string no formato YYYY-MM-DD
+            if (typeof dataString === 'string' && dataString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                const [ano, mes, dia] = dataString.split('-');
+                // Criar data no meio-dia de Brasília
+                return new Date(ano, parseInt(mes) - 1, parseInt(dia), 12, 0, 0);
+            }
+            
+            // Se for uma string ISO
+            if (typeof dataString === 'string' && dataString.includes('T')) {
+                const dataUTC = new Date(dataString);
+                // Ajustar para Brasília (UTC-3)
+                return new Date(dataUTC.getTime() - (3 * 60 * 60 * 1000));
+            }
+            
+            // Tentar converter de qualquer forma
+            return new Date(dataString);
+        }
+
+        // ==================== FUNÇÕES DE CONTROLE ====================
+
+        function toggleMobileMenu() {
+            const navTabs = document.getElementById('navTabs');
+            navTabs.classList.toggle('mobile-open');
+        }
+
+        function toggleParcelamentoOptions() {
+            const tipoTransacao = document.getElementById('tipoTransacao').value;
+            const parcelamentoOptions = document.getElementById('parcelamentoOptions');
+            const parcelamentoLabel = document.getElementById('parcelamentoLabel');
+            
+            if (tipoTransacao === 'unica') {
+                parcelamentoOptions.classList.remove('active');
+            } else {
+                parcelamentoOptions.classList.add('active');
+                if (tipoTransacao === 'parcelada') {
+                    parcelamentoLabel.textContent = 'Número de Parcelas';
+                } else {
+                    parcelamentoLabel.textContent = 'Duração (meses)';
+                }
+            }
+        }
+
+        function mostrarCadastro() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('cadastroSection').style.display = 'block';
+            document.getElementById('loginMessage').style.display = 'none';
+        }
+
+        function mostrarLogin() {
+            document.getElementById('cadastroSection').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('loginMessage').style.display = 'none';
+        }
+
+        function scrollToComoFunciona() {
+            const comoFuncionaSection = document.getElementById('comoFuncionaSection');
+            if (comoFuncionaSection) {
+                comoFuncionaSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function salvarDadosLogin(email, senha, lembrar) {
+            if (lembrar) {
+                localStorage.setItem('financialControl_email', email);
+                localStorage.setItem('financialControl_senha', senha);
+                localStorage.setItem('financialControl_lembrar', 'true');
+            } else {
+                localStorage.removeItem('financialControl_email');
+                localStorage.removeItem('financialControl_senha');
+                localStorage.removeItem('financialControl_lembrar');
+            }
+        }
+
+        function carregarDadosLogin() {
+            const lembrar = localStorage.getItem('financialControl_lembrar');
+            if (lembrar === 'true') {
+                const email = localStorage.getItem('financialControl_email');
+                const senha = localStorage.getItem('financialControl_senha');
+                if (email && senha) {
+                    document.getElementById('loginEmail').value = email;
+                    document.getElementById('loginSenha').value = senha;
+                    document.getElementById('lembrarLogin').checked = true;
+                }
+            }
+        }
+
+        // ==================== CADASTRO DE NOVO USUÁRIO ====================
+
+        document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const nome = document.getElementById('cadastroNome').value.trim();
+            const email = document.getElementById('cadastroEmail').value.trim().toLowerCase();
+            const senha = document.getElementById('cadastroSenha').value;
+            const confirmarSenha = document.getElementById('cadastroConfirmarSenha').value;
+            
+            // Validações
+            if (!nome || !email || !senha) {
+                showAlert('Por favor, preencha todos os campos', 'warning');
+                return;
+            }
+            
+            if (senha !== confirmarSenha) {
+                showAlert('As senhas não coincidem', 'danger');
+                return;
+            }
+            
+            if (senha.length < 4) {
+                showAlert('A senha deve ter pelo menos 4 caracteres', 'danger');
+                return;
+            }
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando conta...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Verificar se o email já existe
+                const verificaResponse = await fetch(
+                    `${SUPABASE_URL}/rest/v1/usuarios?email=eq.${encodeURIComponent(email)}`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+                
+                if (!verificaResponse.ok) {
+                    throw new Error('Erro ao verificar email');
+                }
+                
+                const usuariosExistentes = await verificaResponse.json();
+                
+                if (usuariosExistentes && usuariosExistentes.length > 0) {
+                    showAlert('Este e-mail já está cadastrado. Faça login ou use outro e-mail.', 'warning');
+                    mostrarLogin();
+                    return;
+                }
+                
+                // Data atual em Brasília
+                const dataBrasilia = getDataBrasilia();
+                
+                // Criar novo usuário
+                const novoUsuario = {
+                    nome: nome,
+                    email: email,
+                    senha: senha,
+                    plano: 'demo',
+                    transacoes_realizadas: 0,
+                    ativo: true,
+                    nivel_acesso: 'usuario',
+                    data_cadastro: dataBrasilia.toISOString()
+                };
+                
+                // Criar usuário usando POST
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/usuarios`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(novoUsuario)
+                });
+                
+                if (response.ok) {
+                    // Criar assinatura demo para o usuário
+                    const dataExpiracao = new Date(dataBrasilia);
+                    dataExpiracao.setDate(dataExpiracao.getDate() + 30); // Demo de 30 dias
+                    
+                    const novaAssinatura = {
+                        usuario_id: null, // Será atualizado depois
+                        plano: 'demo',
+                        valor: 0,
+                        status: 'active',
+                        data_inicio: dataBrasilia.toISOString(),
+                        data_expiracao: dataExpiracao.toISOString(),
+                        metodo_pagamento: 'demo',
+                        renovacao_automatica: false,
+                        created_at: dataBrasilia.toISOString(),
+                        updated_at: dataBrasilia.toISOString()
+                    };
+                    
+                    // Primeiro precisamos obter o ID do usuário criado
+                    const usuarioResponse = await fetch(
+                        `${SUPABASE_URL}/rest/v1/usuarios?email=eq.${encodeURIComponent(email)}`,
+                        {
+                            headers: {
+                                'apikey': SUPABASE_KEY,
+                                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                                'Content-Type': 'application/json'
+                            }
+                        }
+                    );
+                    
+                    if (usuarioResponse.ok) {
+                        const usuarios = await usuarioResponse.json();
+                        if (usuarios.length > 0) {
+                            novaAssinatura.usuario_id = usuarios[0].id;
+                            
+                            // Criar assinatura
+                            await fetch(`${SUPABASE_URL}/rest/v1/assinaturas`, {
+                                method: 'POST',
+                                headers: {
+                                    'apikey': SUPABASE_KEY,
+                                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                                    'Content-Type': 'application/json',
+                                    'Prefer': 'return=minimal'
+                                },
+                                body: JSON.stringify(novaAssinatura)
+                            });
+                        }
+                    }
+                    
+                    showAlert('Conta criada com sucesso! Faça login para começar.', 'success');
+                    
+                    this.reset();
+                    mostrarLogin();
+                    document.getElementById('loginEmail').value = email;
+                    document.getElementById('loginSenha').value = senha;
+                    
+                } else {
+                    const errorText = await response.text();
+                    console.error('Erro detalhado do Supabase:', errorText);
+                    throw new Error(`Erro ao criar conta: ${response.status} ${response.statusText}`);
+                }
+                
+            } catch (error) {
+                console.error('Erro completo:', error);
+                showAlert('Erro ao criar conta: ' + error.message, 'danger');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // ==================== LOGIN DE USUÁRIO ====================
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const senha = document.getElementById('loginSenha').value;
+            const lembrar = document.getElementById('lembrarLogin').checked;
+            const loginMessage = document.getElementById('loginMessage');
+            
+            if (!email || !senha) {
+                showMessage(loginMessage, 'Por favor, preencha todos os campos', false);
+                return;
+            }
+            
+            salvarDadosLogin(email, senha, lembrar);
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/usuarios?email=eq.${encodeURIComponent(email)}`, 
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Erro no servidor: ' + response.status);
+                }
+                
+                const usuarios = await response.json();
+                
+                if (usuarios.length === 0) {
+                    showMessage(loginMessage, 'Usuário não encontrado', false);
+                    return;
+                }
+                
+                const usuario = usuarios[0];
+                
+                if (usuario.senha !== senha) {
+                    showMessage(loginMessage, 'Senha incorreta', false);
+                    return;
+                }
+                
+                if (!usuario.ativo) {
+                    showMessage(loginMessage, 'Usuário desativado. Entre em contato com o administrador.', false);
+                    return;
+                }
+                
+                // Login bem sucedido
+                usuarioLogado = usuario;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                document.getElementById('floatingBtn').style.display = 'flex';
+                
+                atualizarInfoUsuario();
+                carregarTransacoes();
+                carregarDashboard();
+                carregarStatusAssinatura();
+                
+                showAlert('Login realizado com sucesso!', 'success');
+                
+                // Verificar se o usuário é admin
+                if (usuarioLogado.nivel_acesso === 'admin') {
+                    carregarUsuariosDemo();
+                }
+                
+            } catch (error) {
+                console.error('Erro no login:', error);
+                showMessage(loginMessage, 'Erro ao fazer login. Tente novamente.', false);
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // ==================== ATUALIZAR INFORMAÇÕES DO USUÁRIO ====================
+
+        function atualizarInfoUsuario() {
+            if (!usuarioLogado) return;
+            
+            document.getElementById('userName').textContent = usuarioLogado.nome;
+            document.getElementById('userRole').textContent = usuarioLogado.nivel_acesso === 'admin' ? 'Administrador' : 'Usuário';
+            document.getElementById('userAvatar').textContent = usuarioLogado.nome.charAt(0).toUpperCase();
+            
+            atualizarBadgePlano();
+            
+            document.getElementById('perfilNome').value = usuarioLogado.nome;
+            document.getElementById('perfilEmail').value = usuarioLogado.email;
+            document.getElementById('perfilPlano').value = usuarioLogado.plano === 'demo' ? 'Gratuito (Demo)' : 'Premium';
+            document.getElementById('perfilNivel').value = usuarioLogado.nivel_acesso === 'admin' ? 'Administrador' : 'Usuário';
+            document.getElementById('perfilTransacoes').value = `${usuarioLogado.transacoes_realizadas || 0} transações`;
+            
+            if (usuarioLogado.nivel_acesso === 'admin') {
+                document.getElementById('adminTab').style.display = 'flex';
+            } else {
+                document.getElementById('adminTab').style.display = 'none';
+            }
+            
+            // Mostrar ou ocultar a aba de cancelamento
+            if (usuarioLogado.plano === 'premium') {
+                document.getElementById('cancelamentoTab').style.display = 'flex';
+                document.getElementById('cancelamentoPremiumBtnContainer').style.display = 'block';
+            } else {
+                document.getElementById('cancelamentoTab').style.display = 'none';
+                document.getElementById('cancelamentoPremiumBtnContainer').style.display = 'none';
+            }
+        }
+
+        function atualizarBadgePlano() {
+            const badge = document.getElementById('planoBadge');
+            const contador = document.getElementById('contadorTransacoes');
+            
+            if (usuarioLogado.plano === 'demo') {
+                badge.innerHTML = '<i class="fas fa-gift"></i> DEMO';
+                badge.className = 'badge badge-demo';
+                
+                const transacoes = usuarioLogado.transacoes_realizadas || 0;
+                contador.textContent = `${transacoes}/${LIMITE_TRANSACOES_DEMO} transações`;
+                contador.style.display = 'block';
+            } else {
+                badge.innerHTML = '<i class="fas fa-crown"></i> PREMIUM';
+                badge.className = 'badge badge-premium';
+                contador.style.display = 'none';
+            }
+        }
+
+        // ==================== SISTEMA DE ASSINATURAS ====================
+
+        async function carregarStatusAssinatura() {
+            if (!usuarioLogado) return;
+            
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/assinaturas?usuario_id=eq.${usuarioLogado.id}&order=data_inicio.desc&limit=1`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+                
+                if (!response.ok) throw new Error('Erro ao carregar assinatura');
+                
+                const assinaturas = await response.json();
+                const container = document.getElementById('assinaturaStatusContainer');
+                
+                if (assinaturas.length === 0) {
+                    // Criar assinatura demo se não existir
+                    await criarAssinaturaDemo();
+                    carregarStatusAssinatura(); // Recarregar
+                    return;
+                }
+                
+                const assinatura = assinaturas[0];
+                const hojeBrasilia = getDataBrasilia();
+                const dataExpiracao = parseDataBrasilia(assinatura.data_expiracao);
+                const diasRestantes = Math.ceil((dataExpiracao - hojeBrasilia) / (1000 * 60 * 60 * 24));
+                
+                let statusClass = 'assinatura-status ';
+                let statusText = '';
+                let statusIcon = '';
+                let statusBadge = '';
+                
+                if (assinatura.status === 'active') {
+                    if (diasRestantes > 7) {
+                        statusClass += 'active';
+                        statusIcon = '<i class="fas fa-check-circle" style="color: #28a745;"></i>';
+                        statusBadge = '<span class="badge badge-success">ATIVA</span>';
+                        statusText = `Sua assinatura está ativa até ${dataExpiracao.toLocaleDateString('pt-BR')} (${diasRestantes} dias restantes)`;
+                    } else if (diasRestantes > 0) {
+                        statusClass += 'expired';
+                        statusIcon = '<i class="fas fa-exclamation-triangle" style="color: #ffc107;"></i>';
+                        statusBadge = '<span class="badge badge-warning">EXPIRANDO</span>';
+                        statusText = `Sua assinatura expira em ${diasRestantes} dias (${dataExpiracao.toLocaleDateString('pt-BR')})`;
+                    } else {
+                        statusClass += 'expired';
+                        statusIcon = '<i class="fas fa-times-circle" style="color: #dc3545;"></i>';
+                        statusBadge = '<span class="badge badge-danger">EXPIRADA</span>';
+                        statusText = `Sua assinatura expirou em ${dataExpiracao.toLocaleDateString('pt-BR')}`;
+                        
+                        // Se for premium e expirou, rebaixar para demo
+                        if (usuarioLogado.plano === 'premium') {
+                            await rebaixarParaDemo();
+                        }
+                    }
+                } else if (assinatura.status === 'cancelled') {
+                    statusClass += 'cancelled';
+                    statusIcon = '<i class="fas fa-ban" style="color: #dc3545;"></i>';
+                    statusBadge = '<span class="badge badge-danger">CANCELADA</span>';
+                    statusText = `Sua assinatura foi cancelada em ${formatarDataParaExibicao(assinatura.updated_at || assinatura.data_expiracao)}`;
+                } else {
+                    statusClass += 'expired';
+                    statusIcon = '<i class="fas fa-question-circle" style="color: #6c757d;"></i>';
+                    statusBadge = '<span class="badge badge-secondary">DESCONHECIDO</span>';
+                    statusText = `Status: ${assinatura.status}`;
+                }
+                
+                container.innerHTML = `
+                    <div class="${statusClass}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="font-size: 1rem; margin: 0;">
+                                ${statusIcon} Status da Assinatura
+                            </h3>
+                            ${statusBadge}
+                        </div>
+                        <p style="margin-bottom: 10px;">${statusText}</p>
+                        <div style="font-size: 0.85rem; color: #666;">
+                            <strong>Plano:</strong> ${assinatura.plano === 'premium' ? 'Premium' : 'Demo'} |
+                            <strong>Valor:</strong> R$ ${assinatura.valor.toFixed(2)} |
+                            <strong>Próxima cobrança:</strong> ${assinatura.renovacao_automatica ? dataExpiracao.toLocaleDateString('pt-BR') : 'Manual'}
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Erro ao carregar status da assinatura:', error);
+            }
+        }
+
+        async function criarAssinaturaDemo() {
+            if (!usuarioLogado) return;
+            
+            try {
+                const dataBrasilia = getDataBrasilia();
+                const dataExpiracao = new Date(dataBrasilia);
+                dataExpiracao.setDate(dataExpiracao.getDate() + 30); // Demo de 30 dias
+                
+                const novaAssinatura = {
+                    usuario_id: usuarioLogado.id,
+                    plano: 'demo',
+                    valor: 0,
+                    status: 'active',
+                    data_inicio: dataBrasilia.toISOString(),
+                    data_expiracao: dataExpiracao.toISOString(),
+                    metodo_pagamento: 'demo',
+                    renovacao_automatica: false,
+                    created_at: dataBrasilia.toISOString(),
+                    updated_at: dataBrasilia.toISOString()
+                };
+                
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/assinaturas`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(novaAssinatura)
+                });
+                
+                return response.ok;
+                
+            } catch (error) {
+                console.error('Erro ao criar assinatura demo:', error);
+                return false;
+            }
+        }
+
+        async function rebaixarParaDemo() {
+            if (!usuarioLogado) return;
+            
+            try {
+                const dataAtual = getDataBrasilia().toISOString();
+                
+                // Atualizar usuário para demo
+                const responseUsuario = await fetch(`${SUPABASE_URL}/rest/v1/usuarios?id=eq.${usuarioLogado.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({ 
+                        plano: 'demo',
+                        updated_at: dataAtual
+                    })
+                });
+                
+                // Atualizar assinatura
+                const responseAssinatura = await fetch(`${SUPABASE_URL}/rest/v1/assinaturas?usuario_id=eq.${usuarioLogado.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({ 
+                        status: 'expired',
+                        plano: 'demo',
+                        valor: 0,
+                        updated_at: dataAtual
+                    })
+                });
+                
+                if (responseUsuario.ok && responseAssinatura.ok) {
+                    usuarioLogado.plano = 'demo';
+                    atualizarInfoUsuario();
+                    carregarStatusAssinatura();
+                    
+                    showAlert('Sua assinatura expirou. Você foi rebaixado para o plano demo.', 'warning');
+                }
+                
+            } catch (error) {
+                console.error('Erro ao rebaixar para demo:', error);
+            }
+        }
+
+        // ==================== FUNÇÕES DO WHATSAPP ====================
+
+        function abrirWhatsApp(mensagem) {
+            const texto = encodeURIComponent(mensagem);
+            const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${texto}`;
+            window.open(url, '_blank');
+        }
+
+        function solicitarPlanoPremium() {
+            // Abre diretamente o link de pagamento do Mercado Pago
+            const urlPagamento = 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=806364e2f70146d39a09d1a66c180eaf';
+            window.open(urlPagamento, '_blank');
+        }
+
+        function abrirWhatsAppCancelamento() {
+            const nomeUsuario = usuarioLogado ? usuarioLogado.nome : 'Cliente';
+            const emailUsuario = usuarioLogado ? usuarioLogado.email : 'Não informado';
+            const planoAtual = usuarioLogado && usuarioLogado.plano === 'premium' ? 'Premium' : 'Demo';
+            
+            const mensagem = `Olá! Gostaria de solicitar o cancelamento do meu plano no FinancialControl.\n\nNome: ${nomeUsuario}\nE-mail: ${emailUsuario}\nPlano atual: ${planoAtual}\n\nPor favor, proceda com o cancelamento.`;
+            abrirWhatsApp(mensagem);
+        }
+
+        // ==================== FUNÇÕES DAS TRANSAÇÕES ====================
+
+        document.getElementById('transacaoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!usuarioLogado) {
+                showAlert('Você precisa estar logado para cadastrar transações', 'warning');
+                return;
+            }
+            
+            // VERIFICAR LIMITE DA DEMO
+            if (usuarioLogado.plano === 'demo') {
+                const transacoesRealizadas = usuarioLogado.transacoes_realizadas || 0;
+                
+                if (transacoesRealizadas >= LIMITE_TRANSACOES_DEMO) {
+                    showAlert(`Você atingiu o limite de ${LIMITE_TRANSACOES_DEMO} transações da versão demo. Assine o plano premium para continuar.`, 'warning');
+                    openTab('planos');
+                    return;
+                }
+                
+                if (transacoesRealizadas >= LIMITE_TRANSACOES_DEMO - 2) {
+                    const restantes = LIMITE_TRANSACOES_DEMO - transacoesRealizadas;
+                    showAlert(`Versão demo: ${restantes} transações restantes. Assine o plano premium para acesso ilimitado.`, 'info');
+                }
+            }
+            
+            const descricao = document.getElementById('descricao').value.trim();
+            const valor = parseFloat(document.getElementById('valor').value);
+            const tipo = document.getElementById('tipo').value;
+            const categoria = document.getElementById('categoria').value;
+            const dataTransacaoInput = document.getElementById('dataTransacao').value;
+            const tipoTransacao = document.getElementById('tipoTransacao').value;
+            
+            if (!descricao || isNaN(valor) || valor <= 0 || !dataTransacaoInput) {
+                showAlert('Por favor, preencha todos os campos corretamente', 'warning');
+                return;
+            }
+            
+            // CORREÇÃO DO FUSO HORÁRIO: Usar a data do input e ajustar para Brasília
+            // O input date retorna no formato YYYY-MM-DD (local do usuário)
+            // Vamos criar uma data em Brasília
+            const [ano, mes, dia] = dataTransacaoInput.split('-');
+            const dataTransacao = new Date(ano, parseInt(mes) - 1, parseInt(dia), 12, 0, 0); // Meio-dia de Brasília
+            
+            // Formatar para ISO string (YYYY-MM-DD)
+            const dataFormatada = formatarDataParaInput(dataTransacao);
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+            submitBtn.disabled = true;
+            
+            try {
+                if (tipoTransacao === 'unica') {
+                    // Transação única
+                    await salvarTransacao({
+                        usuario_id: usuarioLogado.id,
+                        descricao: descricao,
+                        valor: valor,
+                        tipo: tipo,
+                        categoria: categoria,
+                        data_transacao: dataFormatada // Usar a data formatada
+                    });
+                } else {
+                    const numeroParcelas = parseInt(document.getElementById('numeroParcelas').value) || 2;
+                    const frequencia = document.getElementById('frequencia').value;
+                    
+                    for (let i = 0; i < numeroParcelas; i++) {
+                        // Usar a data base ajustada
+                        const dataBase = new Date(dataTransacao);
+                        
+                        if (frequencia === 'mensal') {
+                            dataBase.setMonth(dataBase.getMonth() + i);
+                        } else if (frequencia === 'bimestral') {
+                            dataBase.setMonth(dataBase.getMonth() + (i * 2));
+                        } else if (frequencia === 'trimestral') {
+                            dataBase.setMonth(dataBase.getMonth() + (i * 3));
+                        } else if (frequencia === 'semestral') {
+                            dataBase.setMonth(dataBase.getMonth() + (i * 6));
+                        } else if (frequencia === 'anual') {
+                            dataBase.setFullYear(dataBase.getFullYear() + i);
+                        }
+                        
+                        // Formatar a data para YYYY-MM-DD
+                        const dataParcela = formatarDataParaInput(dataBase);
+                        
+                        await salvarTransacao({
+                            usuario_id: usuarioLogado.id,
+                            descricao: `${descricao} ${tipoTransacao === 'parcelada' ? `Parcela ${i+1}/${numeroParcelas}` : `Recorrência ${i+1}`}`,
+                            valor: tipoTransacao === 'parcelada' ? (valor / numeroParcelas) : valor,
+                            tipo: tipo,
+                            categoria: categoria,
+                            data_transacao: dataParcela
+                        });
+                    }
+                }
+                
+                // INCREMENTAR CONTADOR SE FOR DEMO
+                if (usuarioLogado.plano === 'demo') {
+                    await incrementarContadorTransacoes();
+                }
+                
+                this.reset();
+                // Definir data atual no formato YYYY-MM-DD
+                const hojeBrasilia = getDataBrasilia();
+                const dataAtualFormatada = formatarDataParaInput(hojeBrasilia);
+                document.getElementById('dataTransacao').value = dataAtualFormatada;
+                document.getElementById('parcelamentoOptions').classList.remove('active');
+                
+                carregarTransacoes();
+                carregarDashboard();
+                atualizarInfoUsuario();
+                
+                showAlert('Transação(s) salva(s) com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao salvar transação:', error);
+                showAlert('Erro ao salvar transação. Tente novamente.', 'danger');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        async function salvarTransacao(transacao) {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/transacoes`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(transacao)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Erro ao salvar transação: ${errorText}`);
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Erro ao salvar transação:', error);
+                throw error;
+            }
+        }
+
+        async function incrementarContadorTransacoes() {
+            if (!usuarioLogado || usuarioLogado.plano !== 'demo') return;
+            
+            const novasTransacoes = (usuarioLogado.transacoes_realizadas || 0) + 1;
+            
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/usuarios?id=eq.${usuarioLogado.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({ 
+                        transacoes_realizadas: novasTransacoes 
+                    })
+                });
+                
+                if (response.ok) {
+                    usuarioLogado.transacoes_realizadas = novasTransacoes;
+                    atualizarBadgePlano();
+                    
+                    // Aviso se estiver perto do limite
+                    if (novasTransacoes >= LIMITE_TRANSACOES_DEMO - 3) {
+                        const restantes = LIMITE_TRANSACOES_DEMO - novasTransacoes;
+                        showAlert(`Versão demo: ${restantes} transações restantes. Assine o plano premium para acesso ilimitado.`, 'warning');
+                    }
+                } else {
+                    throw new Error('Erro ao atualizar contador');
+                }
+                
+            } catch (error) {
+                console.error('Erro ao atualizar contador:', error);
+                throw error;
+            }
+        }
+
+        // ==================== CARREGAR TRANSAÇÕES ====================
+
+        async function carregarTransacoes() {
+            if (!usuarioLogado) return;
+            
+            const mesFiltro = document.getElementById('filtroMes').value;
+            const tbody = document.getElementById('transacoesBody');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--gray);">Carregando transações...</td></tr>';
+            
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/transacoes?usuario_id=eq.${usuarioLogado.id}&order=data_transacao.desc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+                
+                if (!response.ok) throw new Error('Erro ao carregar transações');
+                
+                const todasTransacoes = await response.json();
+                
+                let transacoesFiltradas = todasTransacoes;
+                
+                if (mesFiltro) {
+                    const [anoFiltro, mesFiltroNum] = mesFiltro.split('-');
+                    
+                    transacoesFiltradas = todasTransacoes.filter(transacao => {
+                        const dataTransacao = parseDataBrasilia(transacao.data_transacao);
+                        const anoTransacao = dataTransacao.getFullYear();
+                        const mesTransacao = dataTransacao.getMonth() + 1;
+                        
+                        return anoTransacao == anoFiltro && mesTransacao == mesFiltroNum;
+                    });
+                }
+                
+                renderizarTransacoes(transacoesFiltradas);
+                
+            } catch (error) {
+                console.error('Erro ao carregar transações:', error);
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--gray);">Erro ao carregar transações</td></tr>';
+            }
+        }
+
+        function renderizarTransacoes(transacoes) {
+            const tbody = document.getElementById('transacoesBody');
+            tbody.innerHTML = '';
+            
+            if (transacoes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--gray);">Nenhuma transação encontrada</td></tr>';
+                return;
+            }
+            
+            transacoes.forEach(transacao => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${formatarDataParaExibicao(transacao.data_transacao)}</td>
+                    <td title="${transacao.descricao}">${transacao.descricao.length > 15 ? transacao.descricao.substring(0, 15) + '...' : transacao.descricao}</td>
+                    <td>${transacao.categoria}</td>
+                    <td class="${transacao.tipo}">R$ ${parseFloat(transacao.valor).toFixed(2)}</td>
+                    <td>${transacao.tipo === 'receita' ? 'Receita' : 'Despesa'}</td>
+                    <td class="action-buttons">
+                        <button onclick="excluirTransacao('${transacao.id}')" class="btn btn-danger btn-xs" title="Excluir transação">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function excluirTransacao(id) {
+            if (confirm('Tem certeza que deseja excluir esta transação?')) {
+                try {
+                    const response = await fetch(`${SUPABASE_URL}/rest/v1/transacoes?id=eq.${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        carregarTransacoes();
+                        carregarDashboard();
+                        showAlert('Transação excluída com sucesso!', 'success');
+                    } else {
+                        throw new Error('Erro ao excluir transação');
+                    }
+                } catch (error) {
+                    console.error('Erro ao excluir transação:', error);
+                    showAlert('Erro ao excluir transação', 'danger');
+                }
+            }
+        }
+
+        // ==================== DASHBOARD E GRÁFICOS ====================
+
+        async function carregarDashboard() {
+            if (!usuarioLogado) return;
+            
+            const mesSelecionado = document.getElementById('filtroMesDashboard').value;
+            const mesAtual = mesSelecionado || getMesAtualBrasilia();
+            
+            try {
+                const [ano, mes] = mesAtual.split('-');
+                
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/transacoes?usuario_id=eq.${usuarioLogado.id}&order=data_transacao.desc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+                
+                if (!response.ok) throw new Error('Erro ao carregar dashboard');
+                
+                const todasTransacoes = await response.json();
+                
+                const transacoesMes = todasTransacoes.filter(t => {
+                    const dataTransacao = parseDataBrasilia(t.data_transacao);
+                    const anoTransacao = dataTransacao.getFullYear();
+                    const mesTransacao = dataTransacao.getMonth() + 1;
+                    
+                    return anoTransacao == ano && mesTransacao == mes;
+                });
+                
+                let receitas = 0;
+                let despesas = 0;
+                
+                transacoesMes.forEach(t => {
+                    if (t.tipo === 'receita') {
+                        receitas += parseFloat(t.valor);
+                    } else {
+                        despesas += parseFloat(t.valor);
+                    }
+                });
+                
+                let saldoAcumulado = 0;
+                todasTransacoes.forEach(t => {
+                    if (t.tipo === 'receita') {
+                        saldoAcumulado += parseFloat(t.valor);
+                    } else {
+                        saldoAcumulado -= parseFloat(t.valor);
+                    }
+                });
+                
+                const saldoMensal = receitas - despesas;
+                
+                document.getElementById('receitasMes').textContent = `R$ ${receitas.toFixed(2)}`;
+                document.getElementById('despesasMes').textContent = `R$ ${despesas.toFixed(2)}`;
+                document.getElementById('saldoMes').textContent = `R$ ${saldoMensal.toFixed(2)}`;
+                document.getElementById('saldoMes').className = `value ${saldoMensal >= 0 ? 'saldo-positivo' : 'saldo-negativo'}`;
+                
+                document.getElementById('saldoAcumulado').textContent = `R$ ${saldoAcumulado.toFixed(2)}`;
+                document.getElementById('saldoAcumulado').className = `value ${saldoAcumulado >= 0 ? 'saldo-positivo' : 'saldo-negativo'}`;
+                
+                atualizarGraficoPizza(transacoesMes);
+                atualizarGraficoLinha(todasTransacoes);
+                
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+            }
+        }
+
+        function atualizarGraficoPizza(transacoes) {
+            const canvas = document.getElementById('graficoPizza');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Destruir gráfico anterior se existir
+            if (graficoPizza) {
+                graficoPizza.destroy();
+            }
+            
+            // Processar dados para o gráfico
+            const categorias = {};
+            transacoes.forEach(t => {
+                if (!categorias[t.categoria]) {
+                    categorias[t.categoria] = 0;
+                }
+                if (t.tipo === 'receita') {
+                    categorias[t.categoria] += Math.abs(parseFloat(t.valor));
+                } else {
+                    categorias[t.categoria] -= Math.abs(parseFloat(t.valor));
+                }
+            });
+            
+            // Filtrar apenas categorias com valor absoluto
+            const categoriasFiltradas = {};
+            Object.keys(categorias).forEach(categoria => {
+                if (Math.abs(categorias[categoria]) > 0) {
+                    categoriasFiltradas[categoria] = Math.abs(categorias[categoria]);
+                }
+            });
+            
+            const labels = Object.keys(categoriasFiltradas);
+            const data = Object.values(categoriasFiltradas);
+            
+            if (labels.length === 0) {
+                const noData = document.createElement('div');
+                noData.textContent = 'Nenhuma transação para exibir';
+                noData.style.textAlign = 'center';
+                noData.style.padding = '20px';
+                noData.style.color = '#666';
+                
+                const chartWrapper = canvas.parentElement;
+                chartWrapper.innerHTML = '';
+                chartWrapper.appendChild(noData);
+                return;
+            }
+            
+            // Restaurar o canvas se foi removido
+            if (!canvas.parentElement.querySelector('canvas')) {
+                canvas.parentElement.innerHTML = '<canvas id="graficoPizza"></canvas>';
+            }
+            
+            const cores = [
+                '#4361ee', '#7209b7', '#4cc9f0', '#f72585', '#f8961e',
+                '#4895ef', '#3a0ca3', '#2a9d8f', '#e9c46a', '#e76f51'
+            ];
+            
+            graficoPizza = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: cores.slice(0, labels.length),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: window.innerWidth <= 768 ? 10 : 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: R$ ${value.toFixed(2)} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function atualizarGraficoLinha(todasTransacoes) {
+            const canvas = document.getElementById('graficoLinha');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Destruir gráfico anterior se existir
+            if (graficoLinha) {
+                graficoLinha.destroy();
+            }
+            
+            try {
+                // Criar dados dos últimos 6 meses
+                const hoje = getDataBrasilia();
+                const dadosPorMes = {};
+                
+                for (let i = 5; i >= 0; i--) {
+                    const data = new Date(hoje);
+                    data.setMonth(hoje.getMonth() - i);
+                    data.setDate(1);
+                    const chave = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}`;
+                    dadosPorMes[chave] = { receitas: 0, despesas: 0 };
+                }
+                
+                // Processar transações
+                todasTransacoes.forEach(t => {
+                    const dataTransacao = parseDataBrasilia(t.data_transacao);
+                    const mes = `${dataTransacao.getFullYear()}-${String(dataTransacao.getMonth() + 1).padStart(2, '0')}`;
+                    
+                    if (dadosPorMes[mes]) {
+                        if (t.tipo === 'receita') {
+                            dadosPorMes[mes].receitas += parseFloat(t.valor);
+                        } else {
+                            dadosPorMes[mes].despesas += parseFloat(t.valor);
+                        }
+                    }
+                });
+                
+                const meses = Object.keys(dadosPorMes);
+                const receitas = meses.map(mes => dadosPorMes[mes].receitas);
+                const despesas = meses.map(mes => dadosPorMes[mes].despesas);
+                
+                if (meses.length === 0 || (receitas.every(r => r === 0) && despesas.every(d => d === 0))) {
+                    const noData = document.createElement('div');
+                    noData.textContent = 'Nenhuma transação para exibir';
+                    noData.style.textAlign = 'center';
+                    noData.style.padding = '20px';
+                    noData.style.color = '#666';
+                    
+                    const chartWrapper = canvas.parentElement;
+                    chartWrapper.innerHTML = '';
+                    chartWrapper.appendChild(noData);
+                    return;
+                }
+                
+                // Formatar labels dos meses
+                const labelsFormatados = meses.map(mes => {
+                    const [ano, mesNum] = mes.split('-');
+                    const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                    return `${mesesNomes[parseInt(mesNum) - 1]}/${ano.slice(2)}`;
+                });
+                
+                graficoLinha = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labelsFormatados,
+                        datasets: [
+                            {
+                                label: 'Receitas',
+                                data: receitas,
+                                borderColor: '#28a745',
+                                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                                tension: 0.3,
+                                fill: true,
+                                borderWidth: 2
+                            },
+                            {
+                                label: 'Despesas',
+                                data: despesas,
+                                borderColor: '#dc3545',
+                                backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                                tension: 0.3,
+                                fill: true,
+                                borderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return 'R$ ' + value.toFixed(0);
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.dataset.label}: R$ ${context.raw.toFixed(2)}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar gráfico de linha:', error);
+            }
+        }
+
+        // ==================== ALTERAR SENHA ====================
+
+        document.getElementById('alterarSenhaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!usuarioLogado) return;
+            
+            const senhaAtual = document.getElementById('senhaAtual').value;
+            const novaSenha = document.getElementById('novaSenhaPerfil').value;
+            const confirmarSenha = document.getElementById('confirmarNovaSenha').value;
+            
+            if (novaSenha !== confirmarSenha) {
+                showAlert('As senhas não coincidem', 'danger');
+                return;
+            }
+            
+            if (senhaAtual !== usuarioLogado.senha) {
+                showAlert('Senha atual incorreta', 'danger');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/usuarios?id=eq.${usuarioLogado.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ senha: novaSenha })
+                });
+                
+                if (response.ok) {
+                    this.reset();
+                    usuarioLogado.senha = novaSenha;
+                    showAlert('Senha alterada com sucesso!', 'success');
+                } else {
+                    throw new Error('Erro ao alterar senha');
+                }
+            } catch (error) {
+                showAlert('Erro ao alterar senha', 'danger');
+            }
+        });
+
+        // ==================== ADMINISTRAÇÃO ====================
+
+        document.getElementById('usuarioForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!usuarioLogado || usuarioLogado.nivel_acesso !== 'admin') {
+                showAlert('Apenas administradores podem criar usuários', 'warning');
+                return;
+            }
+            
+            const novoNome = document.getElementById('novoNome').value.trim();
+            const novoEmail = document.getElementById('novoEmail').value.trim().toLowerCase();
+            const novaSenha = document.getElementById('novaSenha').value;
+            const novoNivelAcesso = document.getElementById('novoNivelAcesso').value;
+            const novoPlano = document.getElementById('novoPlano').value;
+            
+            try {
+                const dataBrasilia = getDataBrasilia();
+                
+                const novoUsuario = {
+                    nome: novoNome,
+                    email: novoEmail,
+                    senha: novaSenha,
+                    plano: novoPlano,
+                    transacoes_realizadas: 0,
+                    ativo: true,
+                    nivel_acesso: novoNivelAcesso,
+                    data_cadastro: dataBrasilia.toISOString()
+                };
+                
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/usuarios`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(novoUsuario)
+                });
+                
+                if (response.ok) {
+                    this.reset();
+                    showAlert('Usuário criado com sucesso!', 'success');
+                    
+                    // Atualizar a lista de usuários
+                    carregarUsuariosDemo();
+                    if (document.getElementById('usuariosPremiumSection').style.display === 'block') {
+                        carregarUsuarios();
+                    }
+                } else {
+                    const errorText = await response.text();
+                    throw new Error(`Erro ao criar usuário: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Erro ao criar usuário:', error);
+                showAlert('Erro ao criar usuário: ' + error.message, 'danger');
+            }
+        });
+
+        async function carregarUsuariosDemo() {
+            if (!usuarioLogado || usuarioLogado.nivel_acesso !== 'admin') return;
+            
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/usuarios?plano=eq.demo&order=data_cadastro.desc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar usuários demo: ' + response.status);
+                }
+                
+                const usuariosDemo = await response.json();
+                usuariosDemoCache = usuariosDemo;
+                
+                renderizarUsuariosDemo(usuariosDemo);
+                
+            } catch (error) {
+                console.error('Erro ao carregar usuários demo:', error);
+                const tbody = document.getElementById('usuariosDemoBody');
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--gray);">Erro ao carregar usuários</td></tr>';
+            }
+        }
+
+        function renderizarUsuariosDemo(usuarios) {
+            const tbody = document.getElementById('usuariosDemoBody');
+            tbody.innerHTML = '';
+            
+            if (usuarios.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--gray);">Nenhum usuário demo encontrado</td></tr>';
+                return;
+            }
+            
+            usuarios.forEach(usuario => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${usuario.nome || 'Sem nome'}</td>
+                    <td>${usuario.email || 'Sem email'}</td>
+                    <td>${usuario.transacoes_realizadas || 0}/10</td>
+                    <td>${usuario.data_cadastro ? formatarDataParaExibicao(usuario.data_cadastro) : '-'}</td>
+                    <td class="action-buttons">
+                        <button onclick="liberarPremium('${usuario.id}')" class="btn btn-success btn-xs">
+                            <i class="fas fa-crown"></i> Liberar
+                        </button>
+                        <button onclick="excluirUsuario('${usuario.id}')" class="btn btn-danger btn-xs">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function carregarUsuarios() {
+            if (!usuarioLogado || usuarioLogado.nivel_acesso !== 'admin') return;
+            
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/usuarios?order=data_cadastro.desc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar usuários: ' + response.status);
+                }
+                
+                const usuarios = await response.json();
+                
+                // Filtrar usuários premium
+                const usuariosPremium = usuarios.filter(u => u.plano === 'premium');
+                usuariosPremiumCache = usuariosPremium;
+                
+                renderizarUsuariosPremium(usuariosPremium);
+                
+            } catch (error) {
+                console.error('Erro ao carregar usuários:', error);
+            }
+        }
+
+        function renderizarUsuariosPremium(usuarios) {
+            const tbodyPremium = document.getElementById('usuariosPremiumBody');
+            tbodyPremium.innerHTML = '';
+            
+            if (usuarios.length > 0) {
+                usuarios.forEach(usuario => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${usuario.nome || 'Sem nome'}</td>
+                        <td>${usuario.email || 'Sem email'}</td>
+                        <td>${usuario.ativo ? 'Ativo' : 'Inativo'}</td>
+                        <td>${usuario.data_cadastro ? formatarDataParaExibicao(usuario.data_cadastro) : '-'}</td>
+                        <td class="action-buttons">
+                            <button onclick="rebaixarParaDemoAdmin('${usuario.id}')" class="btn btn-warning btn-xs">
+                                <i class="fas fa-gift"></i> Rebaixar
+                            </button>
+                            <button onclick="excluirUsuario('${usuario.id}')" class="btn btn-danger btn-xs">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbodyPremium.appendChild(tr);
+                });
+            } else {
+                tbodyPremium.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--gray);">Nenhum usuário premium encontrado</td></tr>';
+            }
+        }
+
+        function filtrarUsuarios() {
+            const termo = document.getElementById('buscarUsuario').value.toLowerCase().trim();
+            
+            if (document.getElementById('usuariosDemoSection').style.display === 'block') {
+                // Filtrar usuários demo
+                if (!termo) {
+                    renderizarUsuariosDemo(usuariosDemoCache);
+                } else {
+                    const usuariosFiltrados = usuariosDemoCache.filter(usuario => {
+                        return (usuario.nome && usuario.nome.toLowerCase().includes(termo)) ||
+                               (usuario.email && usuario.email.toLowerCase().includes(termo));
+                    });
+                    renderizarUsuariosDemo(usuariosFiltrados);
+                }
+            } else {
+                // Filtrar usuários premium
+                if (!termo) {
+                    renderizarUsuariosPremium(usuariosPremiumCache);
+                } else {
+                    const usuariosFiltrados = usuariosPremiumCache.filter(usuario => {
+                        return (usuario.nome && usuario.nome.toLowerCase().includes(termo)) ||
+                               (usuario.email && usuario.email.toLowerCase().includes(termo));
+                    });
+                    renderizarUsuariosPremium(usuariosFiltrados);
+                }
+            }
+        }
+
+        function limparBusca() {
+            document.getElementById('buscarUsuario').value = '';
+            filtrarUsuarios();
+        }
+
+        function mostrarUsuariosDemo() {
+            document.getElementById('usuariosDemoSection').style.display = 'block';
+            document.getElementById('usuariosPremiumSection').style.display = 'none';
+            document.getElementById('buscarUsuario').value = '';
+            carregarUsuariosDemo();
+        }
+
+        function mostrarUsuariosPremium() {
+            document.getElementById('usuariosDemoSection').style.display = 'none';
+            document.getElementById('usuariosPremiumSection').style.display = 'block';
+            document.getElementById('buscarUsuario').value = '';
+            carregarUsuarios();
+        }
+
+        async function liberarPremium(usuarioId) {
+            if (confirm('Liberar este usuário como Premium?')) {
+                try {
+                    const response = await fetch(`${SUPABASE_URL}/rest/v1/usuarios?id=eq.${usuarioId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json',
+                            'Prefer': 'return=minimal'
+                        },
+                        body: JSON.stringify({ 
+                            plano: 'premium',
+                            transacoes_realizadas: 0
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        showAlert('Usuário liberado como Premium!', 'success');
+                        carregarUsuariosDemo();
+                        carregarUsuarios();
+                        
+                        // Se for o usuário atual, atualizar a interface
+                        if (usuarioLogado && usuarioLogado.id === usuarioId) {
+                            usuarioLogado.plano = 'premium';
+                            atualizarInfoUsuario();
+                        }
+                    } else {
+                        throw new Error('Erro ao liberar premium');
+                    }
+                } catch (error) {
+                    console.error('Erro ao liberar premium:', error);
+                    showAlert('Erro ao liberar premium', 'danger');
+                }
+            }
+        }
+
+        async function rebaixarParaDemoAdmin(usuarioId) {
+            if (confirm('Rebaixar este usuário para Demo?')) {
+                try {
+                    const response = await fetch(`${SUPABASE_URL}/rest/v1/usuarios?id=eq.${usuarioId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json',
+                            'Prefer': 'return=minimal'
+                        },
+                        body: JSON.stringify({ 
+                            plano: 'demo',
+                            transacoes_realizadas: 0
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        showAlert('Usuário rebaixado para Demo!', 'success');
+                        carregarUsuarios();
+                        carregarUsuariosDemo();
+                        
+                        // Se for o usuário atual, atualizar a interface
+                        if (usuarioLogado && usuarioLogado.id === usuarioId) {
+                            usuarioLogado.plano = 'demo';
+                            atualizarInfoUsuario();
+                        }
+                    } else {
+                        throw new Error('Erro ao rebaixar para demo');
+                    }
+                } catch (error) {
+                    console.error('Erro ao rebaixar para demo:', error);
+                    showAlert('Erro ao rebaixar para demo', 'danger');
+                }
+            }
+        }
+
+        async function excluirUsuario(usuarioId) {
+            if (usuarioId === usuarioLogado.id) {
+                showAlert('Você não pode excluir sua própria conta!', 'warning');
+                return;
+            }
+            
+            if (confirm('Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.')) {
+                try {
+                    // Primeiro excluir as transações do usuário
+                    await fetch(
+                        `${SUPABASE_URL}/rest/v1/transacoes?usuario_id=eq.${usuarioId}`,
+                        {
+                            method: 'DELETE',
+                            headers: {
+                                'apikey': SUPABASE_KEY,
+                                'Authorization': `Bearer ${SUPABASE_KEY}`
+                            }
+                        }
+                    );
+                    
+                    // Excluir assinaturas
+                    await fetch(
+                        `${SUPABASE_URL}/rest/v1/assinaturas?usuario_id=eq.${usuarioId}`,
+                        {
+                            method: 'DELETE',
+                            headers: {
+                                'apikey': SUPABASE_KEY,
+                                'Authorization': `Bearer ${SUPABASE_KEY}`
+                            }
+                        }
+                    );
+                    
+                    // Excluir o usuário
+                    const response = await fetch(`${SUPABASE_URL}/rest/v1/usuarios?id=eq.${usuarioId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        showAlert('Usuário excluído com sucesso!', 'success');
+                        carregarUsuariosDemo();
+                        carregarUsuarios();
+                    } else {
+                        throw new Error('Erro ao excluir usuário');
+                    }
+                } catch (error) {
+                    console.error('Erro ao excluir usuário:', error);
+                    showAlert('Erro ao excluir usuário', 'danger');
+                }
+            }
+        }
+
+        // ==================== RELATÓRIOS ====================
+
+        async function gerarRelatorio() {
+            const mesRelatorio = document.getElementById('mesRelatorio').value;
+
+            if (!mesRelatorio) {
+                showAlert('Selecione um mês', 'warning');
+                return;
+            }
+
+            try {
+                const [ano, mes] = mesRelatorio.split('-');
+                
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/transacoes?usuario_id=eq.${usuarioLogado.id}&order=data_transacao.desc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (!response.ok) throw new Error('Erro ao buscar transações');
+
+                const todasTransacoes = await response.json();
+                
+                const transacoes = todasTransacoes.filter(t => {
+                    const dataTransacao = parseDataBrasilia(t.data_transacao);
+                    const anoTransacao = dataTransacao.getFullYear();
+                    const mesTransacao = dataTransacao.getMonth() + 1;
+                    
+                    return anoTransacao == ano && mesTransacao == mes;
+                });
+                
+                exibirRelatorio(transacoes, mesRelatorio);
+                
+            } catch (error) {
+                console.error('Erro ao carregar relatório:', error);
+                showAlert('Erro ao carregar relatório', 'danger');
+            }
+        }
+
+        function exibirRelatorio(transacoes, mesRelatorio) {
+            const resultadoDiv = document.getElementById('relatorioResultado');
+            
+            let receitas = 0;
+            let despesas = 0;
+            
+            // Calcular gastos por categoria
+            const gastosPorCategoria = {};
+            transacoes.forEach(t => {
+                if (t.tipo === 'receita') {
+                    receitas += parseFloat(t.valor);
+                } else {
+                    despesas += parseFloat(t.valor);
+                    if (!gastosPorCategoria[t.categoria]) {
+                        gastosPorCategoria[t.categoria] = 0;
+                    }
+                    gastosPorCategoria[t.categoria] += parseFloat(t.valor);
+                }
+            });
+
+            const saldo = receitas - despesas;
+
+            // Calcular percentuais
+            const totalDespesas = Object.values(gastosPorCategoria).reduce((a, b) => a + b, 0);
+            const categoriasComPercentual = Object.keys(gastosPorCategoria).map(categoria => {
+                const valor = gastosPorCategoria[categoria];
+                const percentual = totalDespesas > 0 ? (valor / totalDespesas * 100).toFixed(1) : 0;
+                return {
+                    categoria,
+                    valor,
+                    percentual
+                };
+            }).sort((a, b) => b.valor - a.valor); // Ordenar do maior para o menor
+
+            // Salvar dados para o PDF
+            relatorioAtual = {
+                transacoes: transacoes,
+                mesRelatorio: mesRelatorio,
+                receitas: receitas,
+                despesas: despesas,
+                saldo: saldo,
+                categorias: categoriasComPercentual
+            };
+
+            let html = `
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">
+                            <i class="fas fa-chart-bar"></i> 
+                            Relatório: ${mesRelatorio}
+                        </h4>
+                        <span style="background: var(--primary); color: white; padding: 5px 10px; border-radius: 15px;">
+                            ${transacoes.length} transações
+                        </span>
+                    </div>
+                    <div class="summary-cards">
+                        <div class="summary-card receita">
+                            <h3>Total Receitas</h3>
+                            <div class="value receita">R$ ${receitas.toFixed(2)}</div>
+                        </div>
+                        <div class="summary-card despesa">
+                            <h3>Total Despesas</h3>
+                            <div class="value despesa">R$ ${despesas.toFixed(2)}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Saldo</h3>
+                            <div class="value ${saldo >= 0 ? 'saldo-positivo' : 'saldo-negativo'}">
+                                R$ ${saldo.toFixed(2)}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gastos por Categoria -->
+                    <div class="card" style="margin-top: 20px;">
+                        <h4><i class="fas fa-chart-pie"></i> Gastos por Categoria</h4>
+                        <div class="table-container" style="margin-top: 10px;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Categoria</th>
+                                        <th>Valor</th>
+                                        <th>Percentual</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+            `;
+
+            if (categoriasComPercentual.length === 0) {
+                html += `
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: var(--gray);">
+                            Nenhum gasto por categoria no período
+                        </td>
+                    </tr>
+                `;
+            } else {
+                categoriasComPercentual.forEach(item => {
+                    html += `
+                        <tr>
+                            <td>${item.categoria}</td>
+                            <td class="despesa">R$ ${item.valor.toFixed(2)}</td>
+                            <td>${item.percentual}%</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de transações -->
+                    <div class="table-container" style="margin-top: 20px;">
+                        <h4><i class="fas fa-list"></i> Transações Detalhadas</h4>
+                        <table style="margin-top: 10px;">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Descrição</th>
+                                    <th>Categoria</th>
+                                    <th>Valor</th>
+                                    <th>Tipo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            if (transacoes.length === 0) {
+                html += `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--gray);">
+                            Nenhuma transação encontrada no período
+                        </td>
+                    </tr>
+                `;
+            } else {
+                transacoes.forEach(transacao => {
+                    html += `
+                        <tr>
+                            <td>${formatarDataParaExibicao(transacao.data_transacao)}</td>
+                            <td>${transacao.descricao}</td>
+                            <td>${transacao.categoria}</td>
+                            <td class="${transacao.tipo}">R$ ${parseFloat(transacao.valor).toFixed(2)}</td>
+                            <td>${transacao.tipo === 'receita' ? 'Receita' : 'Despesa'}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="export-buttons">
+                        <button onclick="exportarParaExcel('${mesRelatorio}')" class="btn btn-success">
+                            <i class="fas fa-file-excel"></i> Exportar para Excel
+                        </button>
+                        <button onclick="gerarPDF()" class="btn btn-danger">
+                            <i class="fas fa-file-pdf"></i> Exportar para PDF
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            resultadoDiv.innerHTML = html;
+            resultadoDiv.style.display = 'block';
+        }
+
+        function exportarParaExcel(mesRelatorio) {
+            const tabela = document.querySelector('#relatorioResultado table');
+            if (!tabela) {
+                showAlert('Nenhuma tabela encontrada para exportar', 'warning');
+                return;
+            }
+            
+            try {
+                const ws = XLSX.utils.table_to_sheet(tabela);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Relatório");
+                XLSX.writeFile(wb, `relatorio_${mesRelatorio}.xlsx`);
+                showAlert('Relatório exportado para Excel com sucesso!', 'success');
+            } catch (error) {
+                showAlert('Erro ao exportar para Excel', 'danger');
+            }
+        }
+
+        function gerarPDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                const relatorio = relatorioAtual;
+                let yPos = 20;
+                
+                // Título
+                doc.setFontSize(18);
+                doc.text('Relatório Financeiro - FinancialControl', 20, yPos);
+                yPos += 10;
+                
+                doc.setFontSize(12);
+                doc.text(`Período: ${relatorio.mesRelatorio}`, 20, yPos);
+                yPos += 8;
+                doc.text(`Emitido em: ${formatarDataParaExibicao(getDataBrasilia())}`, 20, yPos);
+                yPos += 8;
+                doc.text(`Usuário: ${usuarioLogado.nome}`, 20, yPos);
+                yPos += 15;
+                
+                // Resumo Financeiro
+                doc.setFontSize(14);
+                doc.text('Resumo Financeiro', 20, yPos);
+                yPos += 10;
+                
+                doc.setFontSize(10);
+                doc.text(`Receitas: R$ ${relatorio.receitas.toFixed(2)}`, 30, yPos);
+                yPos += 7;
+                doc.text(`Despesas: R$ ${relatorio.despesas.toFixed(2)}`, 30, yPos);
+                yPos += 7;
+                
+                const saldoClass = relatorio.saldo >= 0 ? 'Positivo' : 'Negativo';
+                const saldoCor = relatorio.saldo >= 0 ? '#28a745' : '#dc3545';
+                
+                doc.setTextColor(saldoCor);
+                doc.text(`Saldo: R$ ${relatorio.saldo.toFixed(2)} (${saldoClass})`, 30, yPos);
+                doc.setTextColor(0, 0, 0); // Resetar cor
+                yPos += 7;
+                
+                doc.text(`Total de Transações: ${relatorio.transacoes.length}`, 30, yPos);
+                yPos += 15;
+                
+                // Gastos por Categoria com Percentual
+                if (relatorio.categorias && relatorio.categorias.length > 0) {
+                    if (yPos > 250) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    
+                    doc.setFontSize(14);
+                    doc.text('Gastos por Categoria', 20, yPos);
+                    yPos += 10;
+                    
+                    doc.setFontSize(10);
+                    // Cabeçalho da tabela
+                    doc.text('Categoria', 20, yPos);
+                    doc.text('Valor', 100, yPos);
+                    doc.text('%', 160, yPos);
+                    yPos += 7;
+                    
+                    // Linha separadora
+                    doc.line(20, yPos, 190, yPos);
+                    yPos += 5;
+                    
+                    // Dados das categorias
+                    relatorio.categorias.forEach(item => {
+                        if (yPos > 270) {
+                            doc.addPage();
+                            yPos = 20;
+                            
+                            // Cabeçalho na nova página
+                            doc.setFontSize(10);
+                            doc.text('Categoria', 20, yPos);
+                            doc.text('Valor', 100, yPos);
+                            doc.text('%', 160, yPos);
+                            yPos += 7;
+                            doc.line(20, yPos, 190, yPos);
+                            yPos += 5;
+                        }
+                        
+                        doc.text(item.categoria, 20, yPos);
+                        doc.text(`R$ ${item.valor.toFixed(2)}`, 100, yPos);
+                        doc.text(`${item.percentual}%`, 160, yPos);
+                        yPos += 7;
+                    });
+                    
+                    yPos += 10;
+                }
+                
+                // Transações Detalhadas
+                if (relatorio.transacoes && relatorio.transacoes.length > 0) {
+                    if (yPos > 250) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    
+                    doc.setFontSize(14);
+                    doc.text('Transações Detalhadas', 20, yPos);
+                    yPos += 10;
+                    
+                    // Cabeçalho da tabela
+                    doc.setFontSize(9);
+                    doc.text('Data', 20, yPos);
+                    doc.text('Descrição', 40, yPos);
+                    doc.text('Categoria', 90, yPos);
+                    doc.text('Valor', 130, yPos);
+                    doc.text('Tipo', 160, yPos);
+                    yPos += 7;
+                    
+                    // Linha separadora
+                    doc.line(20, yPos, 190, yPos);
+                    yPos += 5;
+                    
+                    // Dados das transações
+                    relatorio.transacoes.forEach(transacao => {
+                        if (yPos > 270) {
+                            doc.addPage();
+                            yPos = 20;
+                            
+                            // Cabeçalho na nova página
+                            doc.setFontSize(9);
+                            doc.text('Data', 20, yPos);
+                            doc.text('Descrição', 40, yPos);
+                            doc.text('Categoria', 90, yPos);
+                            doc.text('Valor', 130, yPos);
+                            doc.text('Tipo', 160, yPos);
+                            yPos += 7;
+                            doc.line(20, yPos, 190, yPos);
+                            yPos += 5;
+                        }
+                        
+                        doc.setFontSize(8);
+                        doc.text(formatarDataParaExibicao(transacao.data_transacao), 20, yPos);
+                        doc.text(transacao.descricao.substring(0, 30), 40, yPos);
+                        doc.text(transacao.categoria, 90, yPos);
+                        
+                        // Colorir valor baseado no tipo
+                        if (transacao.tipo === 'receita') {
+                            doc.setTextColor(40, 167, 69); // Verde
+                        } else {
+                            doc.setTextColor(220, 53, 69); // Vermelho
+                        }
+                        
+                        doc.text(`R$ ${parseFloat(transacao.valor).toFixed(2)}`, 130, yPos);
+                        doc.setTextColor(0, 0, 0); // Resetar cor
+                        
+                        doc.text(transacao.tipo === 'receita' ? 'Receita' : 'Despesa', 160, yPos);
+                        yPos += 6;
+                    });
+                }
+                
+                // Rodapé
+                doc.setFontSize(8);
+                doc.setTextColor(128, 128, 128);
+                doc.text('Gerado por FinancialControl - Sistema de Gestão Financeira', 20, 285);
+                
+                doc.save(`relatorio_${relatorio.mesRelatorio}.pdf`);
+                showAlert('Relatório exportado para PDF com sucesso!', 'success');
+            } catch (error) {
+                console.error('Erro ao exportar para PDF:', error);
+                showAlert('Erro ao exportar para PDF: ' + error.message, 'danger');
+            }
+        }
+
+        // ==================== FUNÇÕES DE NAVEGAÇÃO ====================
+
+        function openTab(tabName, event) {
+            if (tabName === 'admin' && (!usuarioLogado || usuarioLogado.nivel_acesso !== 'admin')) {
+                showAlert('Acesso negado. Apenas administradores podem acessar esta área.', 'warning');
+                return;
+            }
+            
+            if (tabName === 'cancelamento' && (!usuarioLogado || usuarioLogado.plano !== 'premium')) {
+                showAlert('Apenas usuários premium podem acessar a aba de cancelamento.', 'warning');
+                return;
+            }
+            
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            } else {
+                const tabs = document.querySelectorAll('.nav-tab');
+                tabs.forEach(tab => {
+                    if (tab.onclick && tab.onclick.toString().includes(tabName)) {
+                        tab.classList.add('active');
+                    }
+                });
+            }
+
+            if (window.innerWidth <= 768) {
+                const navTabs = document.getElementById('navTabs');
+                navTabs.classList.remove('mobile-open');
+            }
+            
+            // Carregar dados específicos da aba
+            if (tabName === 'dashboard') {
+                carregarDashboard();
+            } else if (tabName === 'transacoes') {
+                carregarTransacoes();
+            } else if (tabName === 'planos') {
+                carregarStatusAssinatura();
+            } else if (tabName === 'admin' && usuarioLogado && usuarioLogado.nivel_acesso === 'admin') {
+                carregarUsuariosDemo();
+            }
+        }
+
+        function abrirAbaCancelamento() {
+            openTab('cancelamento');
+        }
+
+        function logout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                usuarioLogado = null;
+                document.getElementById('app').style.display = 'none';
+                document.getElementById('floatingBtn').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('loginForm').reset();
+                document.getElementById('loginMessage').style.display = 'none';
+                mostrarLogin();
+            }
+        }
+
+        // ==================== FUNÇÕES DE ALERTA ====================
+
+        function showMessage(element, message, isSuccess) {
+            element.textContent = message;
+            element.className = `alert ${isSuccess ? 'alert-success' : 'alert-danger'}`;
+            element.style.display = 'block';
+        }
+
+        function showAlert(message, type) {
+            const existingAlerts = document.querySelectorAll('.alert[style*="position: fixed"]');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 1000; max-width: 300px; padding: 12px 15px;';
+            
+            document.body.appendChild(alert);
+            setTimeout(() => alert.remove(), 4000);
+        }
+
+        // ==================== INICIALIZAÇÃO ====================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const hojeBrasilia = getDataBrasilia();
+            const mesAtual = getMesAtualBrasilia();
+            const dataAtualFormatada = formatarDataParaInput(hojeBrasilia);
+            
+            document.getElementById('dataTransacao').value = dataAtualFormatada;
+            document.getElementById('filtroMes').value = mesAtual;
+            document.getElementById('mesRelatorio').value = mesAtual;
+            document.getElementById('filtroMesDashboard').value = mesAtual;
+            
+            carregarDadosLogin();
+            
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768 && !e.target.closest('.nav-tabs') && !e.target.closest('.mobile-menu-btn')) {
+                    document.getElementById('navTabs').classList.remove('mobile-open');
+                }
+            });
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.getElementById('navTabs').classList.remove('mobile-open');
+            }
+        });
+    </script>
+</body>
+</html>
