@@ -2276,8 +2276,6 @@
             }
             
             // CORREÇÃO DO FUSO HORÁRIO: Usar a data do input e ajustar para Brasília
-            // O input date retorna no formato YYYY-MM-DD (local do usuário)
-            // Vamos criar uma data em Brasília
             const [ano, mes, dia] = dataTransacaoInput.split('-');
             const dataTransacao = new Date(ano, parseInt(mes) - 1, parseInt(dia), 12, 0, 0); // Meio-dia de Brasília
             
@@ -2298,7 +2296,7 @@
                         valor: valor,
                         tipo: tipo,
                         categoria: categoria,
-                        data_transacao: dataFormatada // Usar a data formatada
+                        data_transacao: dataFormatada
                     });
                 } else {
                     const numeroParcelas = parseInt(document.getElementById('numeroParcelas').value) || 2;
@@ -2523,7 +2521,7 @@
             }
         }
 
-        // ==================== DASHBOARD E GRÁFICOS ====================
+        // ==================== DASHBOARD E GRÁFICOS - CORREÇÃO DOS GRÁFICOS ====================
 
         async function carregarDashboard() {
             if (!usuarioLogado) return;
@@ -2587,8 +2585,11 @@
                 document.getElementById('saldoAcumulado').textContent = `R$ ${saldoAcumulado.toFixed(2)}`;
                 document.getElementById('saldoAcumulado').className = `value ${saldoAcumulado >= 0 ? 'saldo-positivo' : 'saldo-negativo'}`;
                 
-                atualizarGraficoPizza(transacoesMes);
-                atualizarGraficoLinha(todasTransacoes);
+                // Usar um pequeno delay para garantir que os elementos do DOM estejam prontos
+                setTimeout(() => {
+                    atualizarGraficoPizza(transacoesMes);
+                    atualizarGraficoLinha(todasTransacoes);
+                }, 50);
                 
             } catch (error) {
                 console.error('Erro ao carregar dashboard:', error);
@@ -2604,6 +2605,7 @@
             // Destruir gráfico anterior se existir
             if (graficoPizza) {
                 graficoPizza.destroy();
+                graficoPizza = null;
             }
             
             // Processar dados para o gráfico
@@ -2622,7 +2624,7 @@
             // Filtrar apenas categorias com valor absoluto
             const categoriasFiltradas = {};
             Object.keys(categorias).forEach(categoria => {
-                if (Math.abs(categorias[categoria]) > 0) {
+                if (Math.abs(categorias[categoria]) > 0.01) {
                     categoriasFiltradas[categoria] = Math.abs(categorias[categoria]);
                 }
             });
@@ -2630,65 +2632,77 @@
             const labels = Object.keys(categoriasFiltradas);
             const data = Object.values(categoriasFiltradas);
             
+            // Se não houver dados, limpar o canvas
             if (labels.length === 0) {
-                const noData = document.createElement('div');
-                noData.textContent = 'Nenhuma transação para exibir';
-                noData.style.textAlign = 'center';
-                noData.style.padding = '20px';
-                noData.style.color = '#666';
+                // Limpar canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
-                const chartWrapper = canvas.parentElement;
-                chartWrapper.innerHTML = '';
-                chartWrapper.appendChild(noData);
+                // Mostrar mensagem no centro
+                ctx.fillStyle = '#666';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Nenhuma transação para exibir', canvas.width / 2, canvas.height / 2);
                 return;
             }
             
-            // Restaurar o canvas se foi removido
-            if (!canvas.parentElement.querySelector('canvas')) {
-                canvas.parentElement.innerHTML = '<canvas id="graficoPizza"></canvas>';
-            }
+            // Garantir que o canvas tenha dimensões corretas
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
             
-            const cores = [
-                '#4361ee', '#7209b7', '#4cc9f0', '#f72585', '#f8961e',
-                '#4895ef', '#3a0ca3', '#2a9d8f', '#e9c46a', '#e76f51'
-            ];
-            
-            graficoPizza = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: cores.slice(0, labels.length),
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                font: {
-                                    size: window.innerWidth <= 768 ? 10 : 12
+            try {
+                const cores = [
+                    '#4361ee', '#7209b7', '#4cc9f0', '#f72585', '#f8961e',
+                    '#4895ef', '#3a0ca3', '#2a9d8f', '#e9c46a', '#e76f51'
+                ];
+                
+                graficoPizza = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: cores.slice(0, labels.length),
+                            borderWidth: 1,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: {
+                                        size: window.innerWidth <= 768 ? 10 : 12
+                                    }
                                 }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.raw || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = Math.round((value / total) * 100);
-                                    return `${label}: R$ ${value.toFixed(2)} (${percentage}%)`;
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((value / total) * 100);
+                                        return `${label}: R$ ${value.toFixed(2)} (${percentage}%)`;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+                
+                // Forçar redimensionamento
+                setTimeout(() => {
+                    if (graficoPizza) {
+                        graficoPizza.resize();
+                    }
+                }, 100);
+                
+            } catch (error) {
+                console.error('Erro ao criar gráfico de pizza:', error);
+            }
         }
 
         function atualizarGraficoLinha(todasTransacoes) {
@@ -2700,6 +2714,7 @@
             // Destruir gráfico anterior se existir
             if (graficoLinha) {
                 graficoLinha.destroy();
+                graficoLinha = null;
             }
             
             try {
@@ -2721,10 +2736,13 @@
                     const mes = `${dataTransacao.getFullYear()}-${String(dataTransacao.getMonth() + 1).padStart(2, '0')}`;
                     
                     if (dadosPorMes[mes]) {
-                        if (t.tipo === 'receita') {
-                            dadosPorMes[mes].receitas += parseFloat(t.valor);
-                        } else {
-                            dadosPorMes[mes].despesas += parseFloat(t.valor);
+                        const valor = parseFloat(t.valor);
+                        if (!isNaN(valor)) {
+                            if (t.tipo === 'receita') {
+                                dadosPorMes[mes].receitas += valor;
+                            } else {
+                                dadosPorMes[mes].despesas += valor;
+                            }
                         }
                     }
                 });
@@ -2733,18 +2751,22 @@
                 const receitas = meses.map(mes => dadosPorMes[mes].receitas);
                 const despesas = meses.map(mes => dadosPorMes[mes].despesas);
                 
-                if (meses.length === 0 || (receitas.every(r => r === 0) && despesas.every(d => d === 0))) {
-                    const noData = document.createElement('div');
-                    noData.textContent = 'Nenhuma transação para exibir';
-                    noData.style.textAlign = 'center';
-                    noData.style.padding = '20px';
-                    noData.style.color = '#666';
+                // Se não houver dados, limpar o canvas
+                if (receitas.every(r => r === 0) && despesas.every(d => d === 0)) {
+                    // Limpar canvas
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
                     
-                    const chartWrapper = canvas.parentElement;
-                    chartWrapper.innerHTML = '';
-                    chartWrapper.appendChild(noData);
+                    // Mostrar mensagem no centro
+                    ctx.fillStyle = '#666';
+                    ctx.font = '14px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Nenhuma transação para exibir', canvas.width / 2, canvas.height / 2);
                     return;
                 }
+                
+                // Garantir que o canvas tenha dimensões corretas
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
                 
                 // Formatar labels dos meses
                 const labelsFormatados = meses.map(mes => {
@@ -2802,6 +2824,13 @@
                         }
                     }
                 });
+                
+                // Forçar redimensionamento
+                setTimeout(() => {
+                    if (graficoLinha) {
+                        graficoLinha.resize();
+                    }
+                }, 100);
                 
             } catch (error) {
                 console.error('Erro ao carregar gráfico de linha:', error);
