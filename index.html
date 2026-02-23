@@ -76,6 +76,7 @@
         .form-group {
             margin-bottom: 15px;
             text-align: left;
+            position: relative;
         }
         
         .form-label {
@@ -96,6 +97,29 @@
         .form-control:focus {
             border-color: var(--primary);
             outline: none;
+        }
+        
+        /* Estilo para o campo de senha com ícone */
+        .password-wrapper {
+            position: relative;
+        }
+        
+        .password-wrapper input {
+            padding-right: 40px;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--gray);
+            z-index: 10;
+        }
+        
+        .toggle-password:hover {
+            color: var(--primary);
         }
         
         .checkbox-group {
@@ -631,6 +655,11 @@
             text-align: center;
         }
         
+        /* Estilo para o campo de edição */
+        .editing-row {
+            background-color: #fff3cd !important;
+        }
+        
         .parcelamento-options {
             display: none;
             margin-top: 10px;
@@ -714,6 +743,139 @@
         .search-filter input {
             flex: 1;
             min-width: 200px;
+        }
+        
+        /* Estilo para o botão de editar */
+        .btn-edit {
+            background: var(--info);
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #3a78c2;
+        }
+        
+        /* Modal para categorias */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+        
+        .modal-header h3 {
+            font-size: 1.1rem;
+        }
+        
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .close-modal:hover {
+            color: var(--danger);
+        }
+        
+        .categoria-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .categoria-item:last-child {
+            border-bottom: none;
+        }
+        
+        .categoria-nome {
+            font-size: 0.9rem;
+        }
+        
+        .btn-remove-categoria {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn-remove-categoria:hover {
+            color: #c82333;
+        }
+        
+        .add-categoria {
+            margin-top: 15px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .add-categoria input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+        
+        /* Informações de descontinuação */
+        .discontinuation-info {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .discontinuation-info h4 {
+            color: #dc3545;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        
+        .discontinuation-info p {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .discontinuation-info ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .discontinuation-info li {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
         }
         
         @media (max-width: 768px) {
@@ -931,7 +1093,10 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Senha</label>
-                    <input type="password" id="loginSenha" class="form-control" placeholder="Sua senha" required>
+                    <div class="password-wrapper">
+                        <input type="password" id="loginSenha" class="form-control" placeholder="Sua senha" required>
+                        <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('loginSenha', this)"></i>
+                    </div>
                 </div>
                 
                 <div class="checkbox-group">
@@ -965,12 +1130,18 @@
                     
                     <div class="form-group">
                         <label class="form-label">Senha</label>
-                        <input type="password" id="cadastroSenha" class="form-control" placeholder="Crie uma senha" required minlength="4">
+                        <div class="password-wrapper">
+                            <input type="password" id="cadastroSenha" class="form-control" placeholder="Crie uma senha" required minlength="4">
+                            <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('cadastroSenha', this)"></i>
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Confirmar Senha</label>
-                        <input type="password" id="cadastroConfirmarSenha" class="form-control" placeholder="Confirme sua senha" required>
+                        <div class="password-wrapper">
+                            <input type="password" id="cadastroConfirmarSenha" class="form-control" placeholder="Confirme sua senha" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('cadastroConfirmarSenha', this)"></i>
+                        </div>
                     </div>
                     
                     <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 0.8rem;">
@@ -1003,6 +1174,7 @@
                     <h1><i class="fas fa-chart-line"></i> FinancialControl</h1>
                 </div>
             </div>
+            
             <div class="user-info">
                 <div class="plano-indicator">
                     <span id="planoBadge" class="badge badge-demo">
@@ -1130,16 +1302,21 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Categoria</label>
-                            <select id="categoria" class="form-control" required>
-                                <option value="Salário">Salário</option>
-                                <option value="Alimentação">Alimentação</option>
-                                <option value="Transporte">Transporte</option>
-                                <option value="Moradia">Moradia</option>
-                                <option value="Lazer">Lazer</option>
-                                <option value="Saúde">Saúde</option>
-                                <option value="Educação">Educação</option>
-                                <option value="Outros">Outros</option>
-                            </select>
+                            <div style="display: flex; gap: 8px;">
+                                <select id="categoria" class="form-control" required style="flex: 1;">
+                                    <option value="Salário">Salário</option>
+                                    <option value="Alimentação">Alimentação</option>
+                                    <option value="Transporte">Transporte</option>
+                                    <option value="Moradia">Moradia</option>
+                                    <option value="Lazer">Lazer</option>
+                                    <option value="Saúde">Saúde</option>
+                                    <option value="Educação">Educação</option>
+                                    <option value="Outros">Outros</option>
+                                </select>
+                                <button type="button" onclick="abrirModalCategorias()" class="btn btn-info" title="Gerenciar Categorias">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Data</label>
@@ -1330,6 +1507,25 @@
                         <li style="color: #dc3545; font-weight: bold;">Cancele o plano premium a qualquer momento, no botão que será liberado nesta mesma tela, após liberação do seu plano premium</li>
                     </ol>
                 </div>
+                
+                <!-- Informações sobre descontinuação do serviço -->
+                <div class="discontinuation-info">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Informações Importantes sobre o Serviço</h4>
+                    
+                    <p><strong>O serviço pode ser descontinuado a qualquer momento?</strong></p>
+                    <p>Sim. A Financial Control reserva-se o direito de, a qualquer momento, unilateralmente e mediante aviso prévio, descontinuar o sistema ou quaisquer de suas funcionalidades.</p>
+                    
+                    <p><strong>Em caso de descontinuação definitiva do serviço:</strong></p>
+                    <ul>
+                        <li>O usuário não sofrerá qualquer prejuízo financeiro</li>
+                        <li>A cobrança será automaticamente interrompida no mesmo mês da descontinuação</li>
+                        <li>Será devido pelo usuário apenas o valor proporcional referente aos dias de uso efetivo dentro daquele ciclo mensal</li>
+                    </ul>
+                    
+                    <p style="margin-top: 10px; font-size: 0.85rem; color: #666;">
+                        <i class="fas fa-info-circle"></i> Esta política garante que você pague apenas pelo período efetivamente utilizado, sem qualquer ônus adicional em caso de descontinuação do serviço.
+                    </p>
+                </div>
             </div>
         </div>
         
@@ -1369,15 +1565,24 @@
                     <form id="alterarSenhaForm">
                         <div class="form-group">
                             <label class="form-label">Senha Atual</label>
-                            <input type="password" id="senhaAtual" class="form-control" required>
+                            <div class="password-wrapper">
+                                <input type="password" id="senhaAtual" class="form-control" required>
+                                <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('senhaAtual', this)"></i>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Nova Senha</label>
-                            <input type="password" id="novaSenhaPerfil" class="form-control" required minlength="4">
+                            <div class="password-wrapper">
+                                <input type="password" id="novaSenhaPerfil" class="form-control" required minlength="4">
+                                <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('novaSenhaPerfil', this)"></i>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Confirmar Nova Senha</label>
-                            <input type="password" id="confirmarNovaSenha" class="form-control" required>
+                            <div class="password-wrapper">
+                                <input type="password" id="confirmarNovaSenha" class="form-control" required>
+                                <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('confirmarNovaSenha', this)"></i>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Alterar Senha
@@ -1456,7 +1661,10 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Senha</label>
-                            <input type="password" id="novaSenha" class="form-control" required>
+                            <div class="password-wrapper">
+                                <input type="password" id="novaSenha" class="form-control" required>
+                                <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('novaSenha', this)"></i>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Nível de Acesso</label>
@@ -1555,6 +1763,25 @@
         </div>
     </div>
     
+    <!-- Modal de Gerenciamento de Categorias -->
+    <div id="modalCategorias" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-tags"></i> Gerenciar Categorias</h3>
+                <span class="close-modal" onclick="fecharModalCategorias()">&times;</span>
+            </div>
+            <div id="listaCategorias">
+                <!-- Lista de categorias será inserida aqui -->
+            </div>
+            <div class="add-categoria">
+                <input type="text" id="novaCategoria" placeholder="Nova categoria...">
+                <button onclick="adicionarCategoria()" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus"></i> Adicionar
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Botão flutuante -->
     <button class="floating-action-btn" id="floatingBtn" style="display: none;" onclick="openTab('transacoes')">
         <i class="fas fa-plus"></i>
@@ -1590,6 +1817,7 @@
             despesas: 0,
             categorias: []
         };
+        let categoriasPersonalizadas = [];
 
         // ==================== FUNÇÕES DE UTILIDADE PARA FUSO HORÁRIO ====================
 
@@ -1671,6 +1899,21 @@
             return new Date(dataString);
         }
 
+        // ==================== FUNÇÃO PARA MOSTRAR/ESCONDER SENHA ====================
+
+        function togglePasswordVisibility(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
         // ==================== FUNÇÕES DE CONTROLE ====================
 
         function toggleMobileMenu() {
@@ -1736,6 +1979,317 @@
                     document.getElementById('loginSenha').value = senha;
                     document.getElementById('lembrarLogin').checked = true;
                 }
+            }
+        }
+
+        // ==================== FUNÇÕES DO MODAL DE CATEGORIAS ====================
+
+        function abrirModalCategorias() {
+            carregarCategorias();
+            document.getElementById('modalCategorias').classList.add('active');
+        }
+
+        function fecharModalCategorias() {
+            document.getElementById('modalCategorias').classList.remove('active');
+        }
+
+        function carregarCategorias() {
+            // Categorias padrão + personalizadas
+            const categoriasPadrao = ['Salário', 'Alimentação', 'Transporte', 'Moradia', 'Lazer', 'Saúde', 'Educação', 'Outros'];
+            const todasCategorias = [...categoriasPadrao, ...categoriasPersonalizadas];
+            
+            const listaDiv = document.getElementById('listaCategorias');
+            listaDiv.innerHTML = '';
+            
+            todasCategorias.forEach(categoria => {
+                const categoriaDiv = document.createElement('div');
+                categoriaDiv.className = 'categoria-item';
+                categoriaDiv.innerHTML = `
+                    <span class="categoria-nome">${categoria}</span>
+                    ${categoriasPersonalizadas.includes(categoria) ? 
+                        `<button onclick="removerCategoria('${categoria}')" class="btn-remove-categoria" title="Remover categoria">
+                            <i class="fas fa-times"></i>
+                        </button>` : ''}
+                `;
+                listaDiv.appendChild(categoriaDiv);
+            });
+            
+            // Atualizar select de categorias
+            atualizarSelectCategorias();
+        }
+
+        function adicionarCategoria() {
+            const novaCategoria = document.getElementById('novaCategoria').value.trim();
+            if (!novaCategoria) {
+                showAlert('Digite um nome para a categoria', 'warning');
+                return;
+            }
+            
+            // Verificar se já existe
+            const categoriasPadrao = ['Salário', 'Alimentação', 'Transporte', 'Moradia', 'Lazer', 'Saúde', 'Educação', 'Outros'];
+            const todasCategorias = [...categoriasPadrao, ...categoriasPersonalizadas];
+            
+            if (todasCategorias.includes(novaCategoria)) {
+                showAlert('Esta categoria já existe', 'warning');
+                return;
+            }
+            
+            categoriasPersonalizadas.push(novaCategoria);
+            document.getElementById('novaCategoria').value = '';
+            carregarCategorias();
+            showAlert('Categoria adicionada com sucesso!', 'success');
+        }
+
+        function removerCategoria(categoria) {
+            if (confirm(`Tem certeza que deseja remover a categoria "${categoria}"?`)) {
+                const index = categoriasPersonalizadas.indexOf(categoria);
+                if (index > -1) {
+                    categoriasPersonalizadas.splice(index, 1);
+                    carregarCategorias();
+                    showAlert('Categoria removida com sucesso!', 'success');
+                }
+            }
+        }
+
+        function atualizarSelectCategorias() {
+            const select = document.getElementById('categoria');
+            const categoriasPadrao = ['Salário', 'Alimentação', 'Transporte', 'Moradia', 'Lazer', 'Saúde', 'Educação', 'Outros'];
+            const todasCategorias = [...categoriasPadrao, ...categoriasPersonalizadas];
+            
+            // Salvar valor selecionado atual
+            const valorAtual = select.value;
+            
+            // Limpar opções
+            select.innerHTML = '';
+            
+            // Adicionar todas as categorias
+            todasCategorias.forEach(categoria => {
+                const option = document.createElement('option');
+                option.value = categoria;
+                option.textContent = categoria;
+                if (categoria === valorAtual) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+        }
+
+        // ==================== FUNÇÕES DE EDIÇÃO DE TRANSAÇÃO ====================
+
+        let transacaoEmEdicao = null;
+
+        function editarTransacao(id) {
+            // Buscar a transação na tabela
+            const transacao = relatorioAtual.transacoes.find(t => t.id === id);
+            if (!transacao) return;
+            
+            transacaoEmEdicao = transacao;
+            
+            // Preencher o formulário com os dados da transação
+            document.getElementById('descricao').value = transacao.descricao;
+            document.getElementById('valor').value = transacao.valor;
+            document.getElementById('tipo').value = transacao.tipo;
+            document.getElementById('categoria').value = transacao.categoria;
+            document.getElementById('dataTransacao').value = transacao.data_transacao;
+            document.getElementById('tipoTransacao').value = 'unica';
+            document.getElementById('parcelamentoOptions').classList.remove('active');
+            
+            // Mudar o botão de submit para "Atualizar"
+            const submitBtn = document.querySelector('#transacaoForm button[type="submit"]');
+            submitBtn.innerHTML = '<i class="fas fa-edit"></i> Atualizar Transação';
+            submitBtn.classList.remove('btn-primary');
+            submitBtn.classList.add('btn-info');
+            
+            // Adicionar botão de cancelar edição
+            const form = document.getElementById('transacaoForm');
+            if (!document.getElementById('cancelarEdicaoBtn')) {
+                const cancelBtn = document.createElement('button');
+                cancelBtn.type = 'button';
+                cancelBtn.id = 'cancelarEdicaoBtn';
+                cancelBtn.className = 'btn btn-danger btn-block';
+                cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancelar Edição';
+                cancelBtn.onclick = cancelarEdicao;
+                form.appendChild(cancelBtn);
+            }
+            
+            // Scroll para o formulário
+            form.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelarEdicao() {
+            transacaoEmEdicao = null;
+            
+            // Resetar formulário
+            document.getElementById('transacaoForm').reset();
+            
+            // Restaurar botão de submit
+            const submitBtn = document.querySelector('#transacaoForm button[type="submit"]');
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Transação';
+            submitBtn.classList.remove('btn-info');
+            submitBtn.classList.add('btn-primary');
+            
+            // Remover botão de cancelar
+            const cancelBtn = document.getElementById('cancelarEdicaoBtn');
+            if (cancelBtn) {
+                cancelBtn.remove();
+            }
+            
+            // Definir data atual
+            const hojeBrasilia = getDataBrasilia();
+            const dataAtualFormatada = formatarDataParaInput(hojeBrasilia);
+            document.getElementById('dataTransacao').value = dataAtualFormatada;
+        }
+
+        // Sobrescrever o submit do formulário de transação para incluir edição
+        const originalSubmitHandler = document.getElementById('transacaoForm').onsubmit;
+        document.getElementById('transacaoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!usuarioLogado) {
+                showAlert('Você precisa estar logado para cadastrar transações', 'warning');
+                return;
+            }
+            
+            const descricao = document.getElementById('descricao').value.trim();
+            const valor = parseFloat(document.getElementById('valor').value);
+            const tipo = document.getElementById('tipo').value;
+            const categoria = document.getElementById('categoria').value;
+            const dataTransacaoInput = document.getElementById('dataTransacao').value;
+            
+            if (!descricao || isNaN(valor) || valor <= 0 || !dataTransacaoInput) {
+                showAlert('Por favor, preencha todos os campos corretamente', 'warning');
+                return;
+            }
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+            submitBtn.disabled = true;
+            
+            try {
+                if (transacaoEmEdicao) {
+                    // Atualizar transação existente
+                    await atualizarTransacao(transacaoEmEdicao.id, {
+                        descricao,
+                        valor,
+                        tipo,
+                        categoria,
+                        data_transacao: dataTransacaoInput
+                    });
+                    showAlert('Transação atualizada com sucesso!', 'success');
+                    cancelarEdicao();
+                } else {
+                    // VERIFICAR LIMITE DA DEMO (apenas para novas transações)
+                    if (usuarioLogado.plano === 'demo') {
+                        const transacoesRealizadas = usuarioLogado.transacoes_realizadas || 0;
+                        
+                        if (transacoesRealizadas >= LIMITE_TRANSACOES_DEMO) {
+                            showAlert(`Você atingiu o limite de ${LIMITE_TRANSACOES_DEMO} transações da versão demo. Assine o plano premium para continuar.`, 'warning');
+                            openTab('planos');
+                            return;
+                        }
+                        
+                        if (transacoesRealizadas >= LIMITE_TRANSACOES_DEMO - 2) {
+                            const restantes = LIMITE_TRANSACOES_DEMO - transacoesRealizadas;
+                            showAlert(`Versão demo: ${restantes} transações restantes. Assine o plano premium para acesso ilimitado.`, 'info');
+                        }
+                    }
+                    
+                    const tipoTransacao = document.getElementById('tipoTransacao').value;
+                    
+                    if (tipoTransacao === 'unica') {
+                        await salvarTransacao({
+                            usuario_id: usuarioLogado.id,
+                            descricao: descricao,
+                            valor: valor,
+                            tipo: tipo,
+                            categoria: categoria,
+                            data_transacao: dataTransacaoInput
+                        });
+                    } else {
+                        const numeroParcelas = parseInt(document.getElementById('numeroParcelas').value) || 2;
+                        const frequencia = document.getElementById('frequencia').value;
+                        
+                        const [ano, mes, dia] = dataTransacaoInput.split('-');
+                        const dataBase = new Date(ano, parseInt(mes) - 1, parseInt(dia), 12, 0, 0);
+                        
+                        for (let i = 0; i < numeroParcelas; i++) {
+                            const dataParcela = new Date(dataBase);
+                            
+                            if (frequencia === 'mensal') {
+                                dataParcela.setMonth(dataBase.getMonth() + i);
+                            } else if (frequencia === 'bimestral') {
+                                dataParcela.setMonth(dataBase.getMonth() + (i * 2));
+                            } else if (frequencia === 'trimestral') {
+                                dataParcela.setMonth(dataBase.getMonth() + (i * 3));
+                            } else if (frequencia === 'semestral') {
+                                dataParcela.setMonth(dataBase.getMonth() + (i * 6));
+                            } else if (frequencia === 'anual') {
+                                dataParcela.setFullYear(dataBase.getFullYear() + i);
+                            }
+                            
+                            const dataParcelaFormatada = formatarDataParaInput(dataParcela);
+                            
+                            await salvarTransacao({
+                                usuario_id: usuarioLogado.id,
+                                descricao: `${descricao} ${tipoTransacao === 'parcelada' ? `Parcela ${i+1}/${numeroParcelas}` : `Recorrência ${i+1}`}`,
+                                valor: tipoTransacao === 'parcelada' ? (valor / numeroParcelas) : valor,
+                                tipo: tipo,
+                                categoria: categoria,
+                                data_transacao: dataParcelaFormatada
+                            });
+                        }
+                    }
+                    
+                    // INCREMENTAR CONTADOR SE FOR DEMO
+                    if (usuarioLogado.plano === 'demo') {
+                        await incrementarContadorTransacoes();
+                    }
+                    
+                    showAlert('Transação(s) salva(s) com sucesso!', 'success');
+                }
+                
+                this.reset();
+                const hojeBrasilia = getDataBrasilia();
+                const dataAtualFormatada = formatarDataParaInput(hojeBrasilia);
+                document.getElementById('dataTransacao').value = dataAtualFormatada;
+                document.getElementById('parcelamentoOptions').classList.remove('active');
+                
+                carregarTransacoes();
+                carregarDashboard();
+                atualizarInfoUsuario();
+                
+            } catch (error) {
+                console.error('Erro ao salvar transação:', error);
+                showAlert('Erro ao salvar transação. Tente novamente.', 'danger');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        async function atualizarTransacao(id, dados) {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/transacoes?id=eq.${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(dados)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Erro ao atualizar transação: ${errorText}`);
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Erro ao atualizar transação:', error);
+                throw error;
             }
         }
 
@@ -2239,126 +2793,6 @@
 
         // ==================== FUNÇÕES DAS TRANSAÇÕES ====================
 
-        document.getElementById('transacaoForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            if (!usuarioLogado) {
-                showAlert('Você precisa estar logado para cadastrar transações', 'warning');
-                return;
-            }
-            
-            // VERIFICAR LIMITE DA DEMO
-            if (usuarioLogado.plano === 'demo') {
-                const transacoesRealizadas = usuarioLogado.transacoes_realizadas || 0;
-                
-                if (transacoesRealizadas >= LIMITE_TRANSACOES_DEMO) {
-                    showAlert(`Você atingiu o limite de ${LIMITE_TRANSACOES_DEMO} transações da versão demo. Assine o plano premium para continuar.`, 'warning');
-                    openTab('planos');
-                    return;
-                }
-                
-                if (transacoesRealizadas >= LIMITE_TRANSACOES_DEMO - 2) {
-                    const restantes = LIMITE_TRANSACOES_DEMO - transacoesRealizadas;
-                    showAlert(`Versão demo: ${restantes} transações restantes. Assine o plano premium para acesso ilimitado.`, 'info');
-                }
-            }
-            
-            const descricao = document.getElementById('descricao').value.trim();
-            const valor = parseFloat(document.getElementById('valor').value);
-            const tipo = document.getElementById('tipo').value;
-            const categoria = document.getElementById('categoria').value;
-            const dataTransacaoInput = document.getElementById('dataTransacao').value;
-            const tipoTransacao = document.getElementById('tipoTransacao').value;
-            
-            if (!descricao || isNaN(valor) || valor <= 0 || !dataTransacaoInput) {
-                showAlert('Por favor, preencha todos os campos corretamente', 'warning');
-                return;
-            }
-            
-            // CORREÇÃO DO FUSO HORÁRIO: Usar a data do input e ajustar para Brasília
-            const [ano, mes, dia] = dataTransacaoInput.split('-');
-            const dataTransacao = new Date(ano, parseInt(mes) - 1, parseInt(dia), 12, 0, 0); // Meio-dia de Brasília
-            
-            // Formatar para ISO string (YYYY-MM-DD)
-            const dataFormatada = formatarDataParaInput(dataTransacao);
-            
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
-            submitBtn.disabled = true;
-            
-            try {
-                if (tipoTransacao === 'unica') {
-                    // Transação única
-                    await salvarTransacao({
-                        usuario_id: usuarioLogado.id,
-                        descricao: descricao,
-                        valor: valor,
-                        tipo: tipo,
-                        categoria: categoria,
-                        data_transacao: dataFormatada
-                    });
-                } else {
-                    const numeroParcelas = parseInt(document.getElementById('numeroParcelas').value) || 2;
-                    const frequencia = document.getElementById('frequencia').value;
-                    
-                    for (let i = 0; i < numeroParcelas; i++) {
-                        // Usar a data base ajustada
-                        const dataBase = new Date(dataTransacao);
-                        
-                        if (frequencia === 'mensal') {
-                            dataBase.setMonth(dataBase.getMonth() + i);
-                        } else if (frequencia === 'bimestral') {
-                            dataBase.setMonth(dataBase.getMonth() + (i * 2));
-                        } else if (frequencia === 'trimestral') {
-                            dataBase.setMonth(dataBase.getMonth() + (i * 3));
-                        } else if (frequencia === 'semestral') {
-                            dataBase.setMonth(dataBase.getMonth() + (i * 6));
-                        } else if (frequencia === 'anual') {
-                            dataBase.setFullYear(dataBase.getFullYear() + i);
-                        }
-                        
-                        // Formatar a data para YYYY-MM-DD
-                        const dataParcela = formatarDataParaInput(dataBase);
-                        
-                        await salvarTransacao({
-                            usuario_id: usuarioLogado.id,
-                            descricao: `${descricao} ${tipoTransacao === 'parcelada' ? `Parcela ${i+1}/${numeroParcelas}` : `Recorrência ${i+1}`}`,
-                            valor: tipoTransacao === 'parcelada' ? (valor / numeroParcelas) : valor,
-                            tipo: tipo,
-                            categoria: categoria,
-                            data_transacao: dataParcela
-                        });
-                    }
-                }
-                
-                // INCREMENTAR CONTADOR SE FOR DEMO
-                if (usuarioLogado.plano === 'demo') {
-                    await incrementarContadorTransacoes();
-                }
-                
-                this.reset();
-                // Definir data atual no formato YYYY-MM-DD
-                const hojeBrasilia = getDataBrasilia();
-                const dataAtualFormatada = formatarDataParaInput(hojeBrasilia);
-                document.getElementById('dataTransacao').value = dataAtualFormatada;
-                document.getElementById('parcelamentoOptions').classList.remove('active');
-                
-                carregarTransacoes();
-                carregarDashboard();
-                atualizarInfoUsuario();
-                
-                showAlert('Transação(s) salva(s) com sucesso!', 'success');
-                
-            } catch (error) {
-                console.error('Erro ao salvar transação:', error);
-                showAlert('Erro ao salvar transação. Tente novamente.', 'danger');
-            } finally {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
-        });
-
         async function salvarTransacao(transacao) {
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/transacoes`, {
@@ -2446,6 +2880,7 @@
                 if (!response.ok) throw new Error('Erro ao carregar transações');
                 
                 const todasTransacoes = await response.json();
+                relatorioAtual.transacoes = todasTransacoes;
                 
                 let transacoesFiltradas = todasTransacoes;
                 
@@ -2487,6 +2922,9 @@
                     <td class="${transacao.tipo}">R$ ${parseFloat(transacao.valor).toFixed(2)}</td>
                     <td>${transacao.tipo === 'receita' ? 'Receita' : 'Despesa'}</td>
                     <td class="action-buttons">
+                        <button onclick="editarTransacao('${transacao.id}')" class="btn btn-edit btn-xs" title="Editar transação">
+                            <i class="fas fa-edit"></i>
+                        </button>
                         <button onclick="excluirTransacao('${transacao.id}')" class="btn btn-danger btn-xs" title="Excluir transação">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -2521,7 +2959,7 @@
             }
         }
 
-        // ==================== DASHBOARD E GRÁFICOS - CORREÇÃO DOS GRÁFICOS ====================
+        // ==================== DASHBOARD E GRÁFICOS ====================
 
         async function carregarDashboard() {
             if (!usuarioLogado) return;
@@ -3716,6 +4154,14 @@
             
             document.body.appendChild(alert);
             setTimeout(() => alert.remove(), 4000);
+        }
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalCategorias');
+            if (event.target === modal) {
+                modal.classList.remove('active');
+            }
         }
 
         // ==================== INICIALIZAÇÃO ====================
